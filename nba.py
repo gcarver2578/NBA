@@ -272,7 +272,7 @@ class Trades:
         self.m_frame.pack(side=LEFT)
         self.r_frame.pack(side=LEFT)
         self.str_v = StringVar()
-        self.img_1 = PhotoImage(master=self.root, file='images/' + self.team + '_logo.png')
+        self.img_1 = PhotoImage(file='images/' + self.team + '_logo.png')
         self.t_1_lbl = Label(self.m_frame, bg='white', image=self.img_1)
         self.t_1_lbl.pack(side=TOP, padx=100)
         self.lbl = Label(self.m_frame, bg='white', fg='black', textvariable=self.str_v)
@@ -282,7 +282,7 @@ class Trades:
         self.w = OptionMenu(self.m_frame, self.variable, *[t[x] for x in range(1, 31) if t[x] != self.team],
                             command=lambda tm=self.variable.get(): self.disp_team(tm))
         self.w.pack(side=TOP)
-        self.img_2 = PhotoImage(master=self.root, file='images/' + self.variable.get() + '_logo.png')
+        self.img_2 = PhotoImage(file='images/' + self.variable.get() + '_logo.png')
         self.t_2_lbl = Label(self.m_frame, bg='white', image=self.img_2)
         self.t_2_lbl.pack(side=TOP)
         self.b_list = []
@@ -303,7 +303,7 @@ class Trades:
         self.done_btn.pack(side=TOP)
 
     def disp_team(self, team):
-        self.img_2 = PhotoImage(master=self.root, file='images/' + team + '_logo.png')
+        self.img_2 = PhotoImage(file='images/' + team + '_logo.png')
         self.t_2_lbl.configure(image=self.img_2)
         for btn in self.b_list:
             btn[0].destroy()
@@ -319,10 +319,9 @@ class Trades:
             for player in top_3[_tm]:
                 p_name = player[0].split()
                 try:
-                    self.img_list.append(PhotoImage(master=self.root,
-                                                    file='images/' + p_name[0][0] + '_' + p_name[1] + '.png'))
+                    self.img_list.append(PhotoImage(file='images/' + p_name[0][0] + '_' + p_name[1] + '.png'))
                 except TclError:
-                    self.img_list.append(PhotoImage(master=self.root, file='images/red x 2.png'))
+                    self.img_list.append(PhotoImage(file='images/red x 2.png'))
                 self.b_list.append((Button(frame, image=self.img_list[-1], bg='white', text=player[0], borderwidth=5),
                                     player[0]))
                 lbl = Label(frame, text=stats_str(player[0]), bg='white')
@@ -405,28 +404,26 @@ class Trades:
 
     def goto_season(self):
         clear_root(self.root)
-        self.root.destroy()
+        Season(self.root, self.team)
 
 
 class Season:
     def __init__(self, root, team):
         self.team = team
         self.root = root
-        self.trader()
-        self.lbl = Label(master=self.root, text='Hello there.')
+        self.lbl = Label(self.root, text='Hello there.')
         self.lbl.pack(side=TOP)
-        self.trade_btn = Button(master=self.root, text='Trade', bg='blue', fg='white',
+        self.trade_btn = Button(self.root, text='Trade', bg='blue', fg='white',
                                 command=lambda: self.trader())
         self.trade_btn.pack(side=TOP)
 
     def trader(self):
-        root2 = Tk()
-        w, h = root2.winfo_screenwidth(), root2.winfo_screenheight()
-        root2.geometry("%dx%d+0+0" % (w, h))
-        root2.attributes("-fullscreen", True)
-        root2.bind('<Escape>', lambda event, r=root2: toggle_fullscreen(r))
-        Trades(root2, self.team)
-        root2.mainloop()
+        clear_root(self.root)
+        Trades(self.root, self.team)
+        self.repack()
+
+    def repack(self):
+        return
 
 
 def adjust_usage(team):
