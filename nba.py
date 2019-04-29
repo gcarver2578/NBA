@@ -47,96 +47,96 @@ for _tm_ in cities:
 top_3 = {t[1]: [["Joel Embiid", [.527, .308, .75], [13.4, 3.4], 93],
                 ["Ben Simmons", [.551, .01, .40], [12.2, 0.1], 88],
                 ["JJ Redick", [.504, .420, .67], [6, 6.6], 81]],
-         t[2]: [["Giannis Antetokounmpo", [.554, .307, .70], [16.8, 1.9]],
-                ["Eric Bledsoe", [.550, .349, .55], [8.5, 4.9]],
-                ["Khris Middleton", [.517, .359, .65], [10.5, 5]]],
-         t[3]: [["Lauri Markkanen", [.497, .362, .75], [6.8, 5.9]],
-                ["Zach Lavine", [.405, .341, .75], [9.7, 5.1]],
-                ["Kris Dunn", [.457, .321, .50], [10.2, 2.6]]],
-         t[4]: [["LeBron James", [.603, .367, .50], [8.7, 5]],
-                ["Kevin Love", [.494, .415, .80], [6.8, 5.6]],
-                ["Jeff Green", [.540, .312, .70], [5.7, 2.2]]],
-         t[5]: [["Kyrie Irving", [.541, .408, .65], [11.3, 6.8]],
-                ["Gordon Hayward", [.506, .398, .67], [10.7, 5.1]],
-                ["Jayson Tatum", [.526, .324, .70], [10, 3.7]]],
-         t[6]: [["DeAndre Jordan", [.645, 0, .70], [1, 0]],
-                ["Lou Williams", [.484, .359, .61], [10.3, 6.6]],
-                ["Tobias Harris", [.501, .414, .70], [10.7, 5.3]]],
-         t[7]: [["Mike Conley", [.440, .312, .70], [7.6, 6.4]],
-                ["Marc Gasol", [.456, .341, .70], [9.8, 4.4]],
-                ["Tyreke Evans", [.482, .399, .60], [10.1, 5.5]]],
-         t[8]: [["Dennis Schroder", [.48, .29, .58], [13.2, 3.9]],
-                ["John Collins", [.598, .340, .75], [6.8, .6]],
-                ["Kent Bazemore", [.438, .394, .60], [6.2, 4.2]]],
-         t[9]: [["Goran Dragic", [.481, .37, .60], [10.3, 4]],
-                ["Hassan Whiteside", [.538, 1, .77], [1, 0]],
-                ["Dwyane Wade", [.447, .22, .58], [9.8, 2]]],
-         t[10]: [["Kemba Walker", [.469, .384, .60], [9.5, 7.5]],
-                 ["Dwight Howard", [.559, .143, .75], [11.1, .1]],
-                 ["Jeremy Lamb", [.495, .370, .70], [7.2, 3.2]]],
-         t[11]: [["Donovan Mitchell", [.502, .340, .69], [10.2, 7]],
-                 ["Rudy Gobert", [.622, 0, .70], [1, 0]],
-                 ["Joe Ingles", [.516, .44, .47], [3.1, 5.7]]],
-         t[12]: [["Zach Randolph", [.503, .347, .70], [10.4, 2.5]],
-                 ["Buddy Hield", [.457, .431, .80], [6.6, 5.1]],
-                 ["De'Aaron Fox", [.436, .307, .53], [8.8, 2.1]]],
-         t[13]: [["Kristaps Porzingis", [.494, .395, .87], [13.7, 4.8]],
-                 ["Tim Hardaway Jr.", [.515, .317, .74], [7.8, 7.2]],
-                 ["Enes Kanter", [.594, 0, .76], [1, 0]]],
-         t[14]: [["Brandon Ingram", [.483, .39, .65], [11.1, 1.8]],
-                 ["Lonzo Ball", [.42, .305, .40], [5.1, 5.7]],
-                 ["Kyle Kuzma", [.511, .366, .75], [7.9, 5.6]]],
-         t[15]: [["Evan Fournier", [.516, .379, .70], [8.2, 5.9]],
-                 ["Aaron Gordon", [.497, .336, .73], [9, 5.9]],
-                 ["Nikola Vucevic", [.527, .314, .65], [11.1, 3.6]]],
-         t[16]: [["Dennis Smith Jr.", [.435, .313, .57], [9.9, 4.9]],
-                 ["Harrison Barnes", [.487, .357, .75], [11.4, 4.3]],
-                 ["Wesley Matthews", [.441, .381, .65], [4.7, 6.4]]],
-         t[17]: [["D'Angelo Russell", [.477, .324, .55], [8.2, 5.8]],
-                 ["Rondae Hollis-Jefferson", [.491, .241, .70], [9.8, 0.8]],
-                 ["DeMarre Carroll", [.457, .371, .70], [5.4, 5.4]]],
-         t[18]: [["Nikola Jokic", [.538, .396, .50], [9.8, 3.7]],
-                 ["Gary Harris", [.553, .396, .70], [7.7, 5.9]],
-                 ["Jamal Murray", [.502, .378, .65], [7.7, 5.4]]],
-         t[19]: [["Victor Oladipo", [.528, .371, .68], [12.1, 5.8]],
-                 ["Myles Turner", [.519, .357, .75], [7.4, 2.4]],
-                 ["Bojan Bogdanovic", [.534, .402, .80], [5.9, 4.8]]],
-         t[20]: [["Anthony Davis", [.558, .340, .80], [17.3, 2.2]],
-                 ["DeMarcus Cousins", [.53, .354, .65], [11.9, 6.1]],
-                 ["Jrue Holiday", [.557, .337, .53], [11, 4.4]]],
-         t[21]: [["Blake Griffin", [.473, .348, .60], [11.3, 5.4]],
-                 ["Andre Drummond", [.536, .001, .67], [11.2, 0.1]],
-                 ["Reggie Jackson", [.475, .308, .53], [9, 3.8]]],
-         t[22]: [["DeMar DeRozan", [.494, .310, .65], [14.1, 3.6]],
-                 ["Kyle Lowry", [.474, .399, .50], [4.5, 7.6]],
-                 ["Jonas Valanciunas", [.587, .405, .70], [7.9, 1]]],
-         t[23]: [["James Harden", [.531, .367, .57], [10.1, 10]],
-                 ["Chris Paul", [.532, .380, .46], [7.3, 6.5]],
-                 ["Eric Gordon", [.544, .359, .85], [5.3, 8.8]]],
-         t[24]: [["Kawhi Leonard", [.529, .380, .70], [12.5, 5.2]],
-                 ["LaMarcus Aldridge", [.526, .293, .70], [16.8, 1.2]],
-                 ["Rudy Gay", [.516, .314, .75], [7.3, 2.1]]],
-         t[25]: [["Devin Booker", [.46, .383, .70], [12.4, 7.1]],
-                 ["TJ Warren", [.523, .222, .82], [15, 1.4]],
-                 ["Josh Jackson", [.464, .263, .75], [9.3, 2.8]]],
-         t[26]: [["Russel Westbrook", [.485, .298, .50], [17, 4.1]],
-                 ["Paul George", [.454, .401, .65], [9.3, 7.7]],
-                 ["Carmelo Anthony", [.437, .357, .80], [8.9, 6.1]]],
+         t[2]: [["Giannis Antetokounmpo", [.554, .307, .70], [16.8, 1.9], 96],
+                ["Eric Bledsoe", [.550, .349, .55], [8.5, 4.9], 85],
+                ["Khris Middleton", [.517, .359, .65], [10.5, 5], 83]],
+         t[3]: [["Lauri Markkanen", [.497, .362, .75], [6.8, 5.9], 83],
+                ["Zach Lavine", [.405, .341, .75], [9.7, 5.1], 86],
+                ["Kris Dunn", [.457, .321, .50], [10.2, 2.6], 77]],
+         t[4]: [["LeBron James", [.603, .367, .50], [8.7, 5], 96],
+                ["Kevin Love", [.494, .415, .80], [6.8, 5.6], 85],
+                ["Jeff Green", [.540, .312, .70], [5.7, 2.2], 77]],
+         t[5]: [["Kyrie Irving", [.541, .408, .65], [11.3, 6.8], 92],
+                ["Gordon Hayward", [.506, .398, .67], [10.7, 5.1], 86],
+                ["Jayson Tatum", [.526, .324, .70], [10, 3.7], 84]],
+         t[6]: [["DeAndre Jordan", [.645, 0, .70], [1, 0], 83],
+                ["Lou Williams", [.484, .359, .61], [10.3, 6.6], 85],
+                ["Tobias Harris", [.501, .414, .70], [10.7, 5.3], 85]],
+         t[7]: [["Mike Conley", [.440, .312, .70], [7.6, 6.4], 87],
+                ["Marc Gasol", [.456, .341, .70], [9.8, 4.4], 83],
+                ["Tyreke Evans", [.482, .399, .60], [10.1, 5.5], 77]],
+         t[8]: [["Dennis Schroder", [.48, .29, .58], [13.2, 3.9], 77],
+                ["John Collins", [.598, .340, .75], [6.8, .6], 84],
+                ["Kent Bazemore", [.438, .394, .60], [6.2, 4.2], 76]],
+         t[9]: [["Goran Dragic", [.481, .37, .60], [10.3, 4], 80],
+                ["Hassan Whiteside", [.538, 1, .77], [1, 0], 83],
+                ["Dwyane Wade", [.447, .22, .58], [9.8, 2], 81]],
+         t[10]: [["Kemba Walker", [.469, .384, .60], [9.5, 7.5], 88],
+                 ["Dwight Howard", [.559, .143, .75], [11.1, .1], 80],
+                 ["Jeremy Lamb", [.495, .370, .70], [7.2, 3.2], 79]],
+         t[11]: [["Donovan Mitchell", [.502, .340, .69], [10.2, 7], 87],
+                 ["Rudy Gobert", [.622, 0, .70], [1, 0], 89],
+                 ["Joe Ingles", [.516, .44, .47], [3.1, 5.7], 78]],
+         t[12]: [["Zach Randolph", [.503, .347, .70], [10.4, 2.5], 78],
+                 ["Buddy Hield", [.457, .431, .80], [6.6, 5.1], 83],
+                 ["De'Aaron Fox", [.436, .307, .53], [8.8, 2.1], 83]],
+         t[13]: [["Kristaps Porzingis", [.494, .395, .87], [13.7, 4.8], 88],
+                 ["Tim Hardaway Jr.", [.515, .317, .74], [7.8, 7.2], 77],
+                 ["Enes Kanter", [.594, 0, .76], [1, 0], 81]],
+         t[14]: [["Brandon Ingram", [.483, .39, .65], [11.1, 1.8], 81],
+                 ["Lonzo Ball", [.42, .305, .40], [5.1, 5.7], 80],
+                 ["Kyle Kuzma", [.511, .366, .75], [7.9, 5.6], 83]],
+         t[15]: [["Evan Fournier", [.516, .379, .70], [8.2, 5.9], 77],
+                 ["Aaron Gordon", [.497, .336, .73], [9, 5.9], 80],
+                 ["Nikola Vucevic", [.527, .314, .65], [11.1, 3.6], 85]],
+         t[16]: [["Dennis Smith Jr.", [.435, .313, .57], [9.9, 4.9], 77],
+                 ["Harrison Barnes", [.487, .357, .75], [11.4, 4.3], 79],
+                 ["Wesley Matthews", [.441, .381, .65], [4.7, 6.4], 76]],
+         t[17]: [["D'Angelo Russell", [.477, .324, .55], [8.2, 5.8], 87],
+                 ["Rondae Hollis-Jefferson", [.491, .241, .70], [9.8, 0.8], 75],
+                 ["DeMarre Carroll", [.457, .371, .70], [5.4, 5.4], 77]],
+         t[18]: [["Nikola Jokic", [.538, .396, .50], [9.8, 3.7], 92],
+                 ["Gary Harris", [.553, .396, .70], [7.7, 5.9], 79],
+                 ["Jamal Murray", [.502, .378, .65], [7.7, 5.4], 82]],
+         t[19]: [["Victor Oladipo", [.528, .371, .68], [12.1, 5.8], 87],
+                 ["Myles Turner", [.519, .357, .75], [7.4, 2.4], 82],
+                 ["Bojan Bogdanovic", [.534, .402, .80], [5.9, 4.8], 83]],
+         t[20]: [["Anthony Davis", [.558, .340, .80], [17.3, 2.2], 94],
+                 ["DeMarcus Cousins", [.53, .354, .65], [11.9, 6.1], 89],
+                 ["Jrue Holiday", [.557, .337, .53], [11, 4.4], 86]],
+         t[21]: [["Blake Griffin", [.473, .348, .60], [11.3, 5.4], 87],
+                 ["Andre Drummond", [.536, .001, .67], [11.2, 0.1], 87],
+                 ["Reggie Jackson", [.475, .308, .53], [9, 3.8], 80]],
+         t[22]: [["DeMar DeRozan", [.494, .310, .65], [14.1, 3.6], 88],
+                 ["Kyle Lowry", [.474, .399, .50], [4.5, 7.6], 84],
+                 ["Jonas Valanciunas", [.587, .405, .70], [7.9, 1], 82]],
+         t[23]: [["James Harden", [.531, .367, .57], [10.1, 10], 96],
+                 ["Chris Paul", [.532, .380, .46], [7.3, 6.5], 87],
+                 ["Eric Gordon", [.544, .359, .85], [5.3, 8.8], 77]],
+         t[24]: [["Kawhi Leonard", [.529, .380, .70], [12.5, 5.2], 95],
+                 ["LaMarcus Aldridge", [.526, .293, .70], [16.8, 1.2], 87],
+                 ["Rudy Gay", [.516, .314, .75], [7.3, 2.1], 81]],
+         t[25]: [["Devin Booker", [.46, .383, .70], [12.4, 7.1], 88],
+                 ["TJ Warren", [.523, .222, .82], [15, 1.4], 81],
+                 ["Josh Jackson", [.464, .263, .75], [9.3, 2.8], 77]],
+         t[26]: [["Russel Westbrook", [.485, .298, .50], [17, 4.1], 93],
+                 ["Paul George", [.454, .401, .65], [9.3, 7.7], 90],
+                 ["Carmelo Anthony", [.437, .357, .80], [8.9, 6.1], 76]],
          t[27]: [["Karl-Anthony Towns", [.585, .421, .70], [10.8, 3.5], 91],
                  ["Jimmy Butler", [.509, .35, .65], [12.2, 3.4], 88],
                  ["Andrew Wiggins", [.475, .331, .70], [11.8, 4.1], 80]],
-         t[28]: [["Damian Lillard", [.501, .361, .60], [10.8, 8.6]],
-                 ["CJ McCollum", [.465, .397, .65], [12.7, 5.9]],
-                 ["Jusuf Nurkic", [.508, .001, .70], [11.9, 0.1]]],
-         t[29]: [["Stephen Curry", [.595, .423, .60], [7.1, 9.8]],
-                 ["Kevin Durant", [.565, .419, .63], [11.9, 6.1]],
-                 ["Klay Thompson", [.527, .440, .70], [9, 7.1]]],
-         t[30]: [["John Wall", [.436, .371, .50], [12.2, 4.1]],
-                 ["Bradley Beal", [.507, .375, .65], [11.6, 6.5]],
-                 ["Otto Porter Jr.", [.537, .441, .71], [7.4, 4.1]]]}
+         t[28]: [["Damian Lillard", [.501, .361, .60], [10.8, 8.6], 92],
+                 ["CJ McCollum", [.465, .397, .65], [12.7, 5.9], 85],
+                 ["Jusuf Nurkic", [.508, .001, .70], [11.9, 0.1], 85]],
+         t[29]: [["Stephen Curry", [.595, .423, .60], [7.1, 9.8], 95],
+                 ["Kevin Durant", [.565, .419, .63], [11.9, 6.1], 95],
+                 ["Klay Thompson", [.527, .440, .70], [9, 7.1], 88]],
+         t[30]: [["John Wall", [.436, .371, .50], [12.2, 4.1], 89],
+                 ["Bradley Beal", [.507, .375, .65], [11.6, 6.5], 88],
+                 ["Otto Porter Jr.", [.537, .441, .71], [7.4, 4.1], 81]]}
 
-# personal usage rates for each player ["JJ Redick",[.504,.420,.67],[6,6.6]]],\
-usage_r = {'76ers': [.34, .21, .21], 'Bucks': [.35, .28, .30], 'Bulls': [.20, .29, .30],
+# personal usage rates for each player
+usage_r = {'76ers': [.34, .33, .21], 'Bucks': [.35, .28, .30], 'Bulls': [.20, .29, .30],
            'Cavaliers': [.44, .20, .14], 'Celtics': [.31, .29, .25], 'Clippers': [.15, .35, .26],
            'Grizzlies': [.28, .27, .29], 'Hawks': [.35, .12, .20], 'Heat': [.29, .15, .23],
            'Hornets': [.34, .19, .18], 'Jazz': [.28, .15, .20], 'Kings': [.20, .16, .23],
@@ -245,7 +245,7 @@ class Start:
 
     def off_season(self):
         clear_root(self.root)
-        Trades(self.root, self.team)
+        Season(self.root, self.team)
 
     def toggle_forced_trades(self):
         global force_trades
@@ -263,14 +263,18 @@ class Trades:
     """used for making trades during the season"""
     def __init__(self, root, team):
         self.root = root
+        self.root.configure(bg='grey')
         self.team = team
-        self.l_frame = Frame(self.root)
-        self.m_frame = Frame(self.root)
-        self.r_frame = Frame(self.root)
+        self.l_frame = Frame(self.root, bg='white')
+        self.m_frame = Frame(self.root, bg='white')
+        self.r_frame = Frame(self.root, bg='white')
         self.l_frame.pack(side=LEFT)
         self.m_frame.pack(side=LEFT)
         self.r_frame.pack(side=LEFT)
         self.str_v = StringVar()
+        self.img_1 = PhotoImage(master=self.root, file='images/' + self.team + '_logo.png')
+        self.t_1_lbl = Label(self.m_frame, bg='white', image=self.img_1)
+        self.t_1_lbl.pack(side=TOP, padx=100)
         self.lbl = Label(self.m_frame, bg='white', fg='black', textvariable=self.str_v)
         self.lbl.pack(side=TOP)
         self.variable = StringVar()
@@ -278,6 +282,9 @@ class Trades:
         self.w = OptionMenu(self.m_frame, self.variable, *[t[x] for x in range(1, 31) if t[x] != self.team],
                             command=lambda tm=self.variable.get(): self.disp_team(tm))
         self.w.pack(side=TOP)
+        self.img_2 = PhotoImage(master=self.root, file='images/' + self.variable.get() + '_logo.png')
+        self.t_2_lbl = Label(self.m_frame, bg='white', image=self.img_2)
+        self.t_2_lbl.pack(side=TOP)
         self.b_list = []
         self.selected_buttons = []
         self.img_list = []
@@ -287,11 +294,17 @@ class Trades:
         self.b4 = ''
         self.b5 = ''
         self.b6 = ''
+        self.declined_trades = []
         self.disp_team(self.variable.get())
         self.trade_btn = Button(self.m_frame, text='Trade', command=lambda: self.player_swap())
         self.trade_btn.pack(side=TOP)
+        self.done_btn = Button(self.m_frame, text='Done', bg='red', fg='white',
+                               command=lambda: self.goto_season())
+        self.done_btn.pack(side=TOP)
 
     def disp_team(self, team):
+        self.img_2 = PhotoImage(master=self.root, file='images/' + team + '_logo.png')
+        self.t_2_lbl.configure(image=self.img_2)
         for btn in self.b_list:
             btn[0].destroy()
         del self.selected_buttons
@@ -300,19 +313,21 @@ class Trades:
         self.selected_buttons = []
         for item in self.img_list:
             self.img_list.remove(item)
-        for _tm, frame in [(self.team, self.l_frame), (team, self.r_frame)]:
+        for _tm, frame, pad in [(self.team, self.l_frame, (260, 0)), (team, self.r_frame, (0, 260))]:
             for widget in frame.winfo_children():
                 widget.destroy()
             for player in top_3[_tm]:
                 p_name = player[0].split()
                 try:
-                    self.img_list.append(PhotoImage(file='images/' + p_name[0][0] + '_' + p_name[1] + '.png'))
+                    self.img_list.append(PhotoImage(master=self.root,
+                                                    file='images/' + p_name[0][0] + '_' + p_name[1] + '.png'))
                 except TclError:
-                    self.img_list.append(PhotoImage(file='images/red x 2.png'))
-                self.b_list.append((Button(frame, image=self.img_list[-1], bg='white', text=player[0]), player[0]))
-                lbl = Label(frame, text=stats_str(player[0]))
-                self.b_list[-1][0].pack(side=TOP)
-                lbl.pack(side=TOP)
+                    self.img_list.append(PhotoImage(master=self.root, file='images/red x 2.png'))
+                self.b_list.append((Button(frame, image=self.img_list[-1], bg='white', text=player[0], borderwidth=5),
+                                    player[0]))
+                lbl = Label(frame, text=stats_str(player[0]), bg='white')
+                self.b_list[-1][0].pack(side=TOP, padx=pad)
+                lbl.pack(side=TOP, padx=pad)
         self.b1 = self.b_list[0][0]
         self.b2 = self.b_list[1][0]
         self.b3 = self.b_list[2][0]
@@ -337,24 +352,88 @@ class Trades:
             _btn.configure(bg='white')
 
     def player_swap(self):
-        if len(self.selected_buttons) != 2:
-            return
-        p_1 = self.selected_buttons[0]
-        p_2 = self.selected_buttons[1]
-        t_1 = team_id[p_1]
-        t_2 = team_id[p_2]
-        i_1 = team_index(p_1)
-        i_2 = team_index(p_2)
-        temp_usage = usage_r[t_1][i_1]
-        usage_r[t_1][i_1] = usage_r[t_2][i_2]
-        usage_r[t_2][i_2] = temp_usage
-        temp_top = top_3[t_1][i_1][:]
-        top_3[t_1][i_1] = top_3[t_2][i_2][:]
-        top_3[t_2][i_2] = temp_top
-        temp_id = t_1
-        team_id[p_1] = t_2
-        team_id[p_2] = temp_id
-        self.disp_team(t_2)
+        if self.trade_accepted():
+            l_1 = [player for player in self.selected_buttons if team_id[player] == self.team]
+            l_2 = [player for player in self.selected_buttons if team_id[player] != self.team]
+            t_list = [[l_1[i], l_2[i]] for i in range(len(l_1))]
+            t_1 = ''
+            t_2 = ''
+            for _trade_ in t_list:
+                p_1 = _trade_[0]
+                p_2 = _trade_[1]
+                t_1 = team_id[p_1]
+                t_2 = team_id[p_2]
+                i_1 = team_index(p_1)
+                i_2 = team_index(p_2)
+                temp_usage = usage_r[t_1][i_1]
+                usage_r[t_1][i_1] = usage_r[t_2][i_2]
+                usage_r[t_2][i_2] = temp_usage
+                temp_top = top_3[t_1][i_1][:]
+                top_3[t_1][i_1] = top_3[t_2][i_2][:]
+                top_3[t_2][i_2] = temp_top
+                temp_id = t_1
+                team_id[p_1] = t_2
+                team_id[p_2] = temp_id
+            adjust_usage(t_1)
+            adjust_usage(t_2)
+            self.disp_team(t_2)
+        else:
+            self.str_v.set('Trade declined.')
+            self.declined_trades.append(sorted(self.selected_buttons))
+
+    def trade_accepted(self):
+        if sorted(self.selected_buttons) in self.declined_trades:
+            return False
+        t_1_ps = 0
+        t_2_ps = 0
+        t_1_ovr = 0
+        t_2_ovr = 0
+        for player in self.selected_buttons:
+            if team_id[player] == self.team:
+                t_1_ps += 1
+                t_1_ovr += top_3[self.team][team_index(player)][3]
+            else:
+                t_2_ps += 1
+                t_2_ovr += top_3[team_id[player]][team_index(player)][3]
+        if t_1_ps != t_2_ps:
+            return False
+        if force_trades:
+            return True
+        if t_1_ovr + 5 >= t_2_ovr:
+            return True
+        return False
+
+    def goto_season(self):
+        clear_root(self.root)
+        self.root.destroy()
+
+
+class Season:
+    def __init__(self, root, team):
+        self.team = team
+        self.root = root
+        self.trader()
+        self.lbl = Label(master=self.root, text='Hello there.')
+        self.lbl.pack(side=TOP)
+        self.trade_btn = Button(master=self.root, text='Trade', bg='blue', fg='white',
+                                command=lambda: self.trader())
+        self.trade_btn.pack(side=TOP)
+
+    def trader(self):
+        root2 = Tk()
+        w, h = root2.winfo_screenwidth(), root2.winfo_screenheight()
+        root2.geometry("%dx%d+0+0" % (w, h))
+        root2.attributes("-fullscreen", True)
+        root2.bind('<Escape>', lambda event, r=root2: toggle_fullscreen(r))
+        Trades(root2, self.team)
+        root2.mainloop()
+
+
+def adjust_usage(team):
+    """adjusts the usage rate of each player on a team after a trade"""
+    while sum(usage_r[team]) >= 1:
+        for i in range(3):
+            usage_r[team][i] = usage_r[team][i] - .01
 
 
 def stats_str(player):
@@ -399,14 +478,21 @@ def clear_root(root):
         widget.destroy()
 
 
+def toggle_fullscreen(r):
+    r.attributes('-fullscreen', not r.attributes('-fullscreen'))
+
+
 def main():
     root = Tk()
     Start(root)
     w, h = root.winfo_screenwidth(), root.winfo_screenheight()
     root.geometry("%dx%d+0+0" % (w, h))
+    root.attributes("-fullscreen", True)
+    root.bind('<Escape>', lambda event, r=root: toggle_fullscreen(r))
     root.mainloop()
 
-## NBA game
+
+"""## NBA game
 def game(team_1, team_2):
     score_1 = 0
     score_2 = 0
@@ -587,5 +673,6 @@ for team in schedules:
             t_stats[opp][0][1] += 1
         elif g[0] < g[1]:
             t_stats[team][0][1] += 1
-            t_stats[opp][0][0] += 1
+            t_stats[opp][0][0] += 1"""
 
+main()
