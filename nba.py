@@ -1,6 +1,7 @@
 # Gabriel Carver
 from tkinter import *
 import random
+import big_variables as bv
 
 atlantic = ['76ers', 'Celtics', 'Knicks', 'Nets', 'Raptors']
 central = ['Bucks', 'Bulls', 'Cavaliers', 'Pacers', 'Pistons']
@@ -22,7 +23,7 @@ t = {1: '76ers', 2: 'Bucks', 3: 'Bulls', 4: 'Cavaliers', 5: 'Celtics',
      26: 'Thunder', 27: 'Timberwolves', 28: 'Trail Blazers', 29: 'Warriors', 30: 'Wizards'}
 
 cities = {t[1]: "Philadelphia", t[2]: "Milwaukee", t[3]: "Chicago", t[4]: "Cleveland", t[5]: "Boston",
-          t[6]: "Los Angeles", t[7]: "Memphis", t[8]: "Atlanta", t[9]: "Miami", t[10]: "Charlotte",
+          t[6]: "LA", t[7]: "Memphis", t[8]: "Atlanta", t[9]: "Miami", t[10]: "Charlotte",
           t[11]: "Utah", t[12]: "Sacramento", t[13]: "New York", t[14]: "Los Angeles", t[15]: "Orlando",
           t[16]: "Dallas", t[17]: "Brooklyn", t[18]: "Denver", t[19]: "Indiana", t[20]: "New Orleans",
           t[21]: "Detroit", t[22]: "Toronto", t[23]: "Houston", t[24]: "San Antonio", t[25]: "Phoenix",
@@ -163,6 +164,7 @@ for t_e_a_m in top_3:
 # used to identify what team each player is on
 team_id = {}
 for t_e_a_m in top_3:
+    team_id[cities[t_e_a_m] + ' ' + t_e_a_m] = t_e_a_m
     for p_layer in top_3[t_e_a_m]:
         team_id[p_layer[0]] = t_e_a_m
 
@@ -373,8 +375,9 @@ class Trades:
                 temp_id = t_1
                 team_id[p_1] = t_2
                 team_id[p_2] = temp_id
-            adjust_usage(t_1)
-            adjust_usage(t_2)
+            if t_1 != '' and t_2 != '':
+                adjust_usage(t_1)
+                adjust_usage(t_2)
             self.disp_team(t_2)
         else:
             self.str_v.set('Trade declined.')
@@ -658,18 +661,20 @@ schedules = {'76ers':[t[2]]*4+[t[3]]*3+[t[4]]*4+[t[5]]*4+[t[6]]*2+[t[7]]*2+[t[8]
                  'Trail Blazers':[t[29]]*3+[t[30]]*2,\
                  'Warriors':[t[30]]*2,\
                  'Wizards':[]}
-for team in schedules:
-    schedule = schedules[team]
-    for opp in schedule:
-        g = game(team,opp)
-        for i in range(2):
-            t_stats[team][1][i] += g[i]
-            t_stats[opp][1][i] += g[(i+1) % 2]
-        if g[0] > g[1]:
-            t_stats[team][0][0] += 1
-            t_stats[opp][0][1] += 1
-        elif g[0] < g[1]:
-            t_stats[team][0][1] += 1
-            t_stats[opp][0][0] += 1"""
+for _game_ in bv.schedule:
+    team = team_id[_game_[1]]
+    opp = team_id[_game_[2]]
+    g = game(team,opp)
+    for i in range(2):
+        t_stats[team][1][i] += g[i]
+        t_stats[opp][1][i] += g[(i+1) % 2]
+    if g[0] > g[1]:
+        t_stats[team][0][0] += 1
+        t_stats[opp][0][1] += 1
+    elif g[0] < g[1]:
+        t_stats[team][0][1] += 1
+        t_stats[opp][0][0] += 1"""
 
 main()
+# for tm in t_stats:
+#    print(t_stats[tm])
