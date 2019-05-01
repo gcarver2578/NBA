@@ -171,10 +171,21 @@ for t_e_a_m in top_3:
 # used for trading, teams cannot decline trades when set to true
 force_trades = False
 
+# dates used for season
+month = 10
+day = 14
+year = 2018
+
+days = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
+month_abbreviations = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May',
+                       6: 'June', 7: 'July', 8: 'Aug', 9: 'Sept', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
+
 
 class Start:
     """class for the beginning of the program, user chooses their favorite team"""
     def __init__(self, root):
+        global force_trades
+        force_trades = False
         self.team = ''
         self.root = root
         self.root.configure(bg='black')
@@ -282,7 +293,7 @@ class Trades:
         self.variable = StringVar()
         self.variable.set([t[x] for x in range(1, 31) if t[x] != self.team][0])
         self.w = OptionMenu(self.m_frame, self.variable, *[t[x] for x in range(1, 31) if t[x] != self.team],
-                            command=lambda tm=self.variable.get(): self.disp_team(tm))
+                            command=lambda _tm=self.variable.get(): self.disp_team(_tm))
         self.w.pack(side=TOP)
         self.img_2 = PhotoImage(file='images/' + self.variable.get() + '_logo.png')
         self.t_2_lbl = Label(self.m_frame, bg='white', image=self.img_2)
@@ -412,6 +423,9 @@ class Trades:
 
 class Season:
     def __init__(self, root, team):
+        global day
+        global month
+        global year
         self.team = team
         self.root = root
         self.lbl = Label(self.root, text='Hello there.')
@@ -419,14 +433,104 @@ class Season:
         self.trade_btn = Button(self.root, text='Trade', bg='blue', fg='white',
                                 command=lambda: self.trader())
         self.trade_btn.pack(side=TOP)
+        self.m_frame = Frame(self.root)
+        self.m_frame.pack(side=TOP)
+        self.team_schedule = [x for x in bv.schedule if cities[self.team] + ' ' + self.team in x]
+        # for loop causes too many issues, just listed out all buttons
+        self.b1 = ''
+        self.b2 = ''
+        self.b3 = ''
+        self.b4 = ''
+        self.b5 = ''
+        self.b6 = ''
+        self.img1, self.img2, self.img3, self.img4, self.img5 = [''] * 5
+        self.str1 = StringVar()
+        self.str2 = StringVar()
+        self.str3 = StringVar()
+        self.str4 = StringVar()
+        self.str5 = StringVar()
+        self.str1.set(month_abbreviations[date_format([day, month, year])[1]] + ' ' +
+                      str(date_format([day, month, year])[0]))
+        self.str2.set(month_abbreviations[date_format([day + 1, month, year])[1]] + ' ' +
+                      str(date_format([day + 1, month, year])[0]))
+        self.str3.set(month_abbreviations[date_format([day + 2, month, year])[1]] + ' ' +
+                      str(date_format([day + 2, month, year])[0]))
+        self.str4.set(month_abbreviations[date_format([day + 3, month, year])[1]] + ' ' +
+                      str(date_format([day + 3, month, year])[0]))
+        self.str5.set(month_abbreviations[date_format([day + 4, month, year])[1]] + ' ' +
+                      str(date_format([day + 4, month, year])[0]))
+        if self.has_game(date_format([day, month, year])):
+            self.img1 = PhotoImage(file='images/' + self.game_index(date_format([day, month, year]))[1] +
+                                        '_logo.png')
+        else:
+            self.img1 = PhotoImage(file='images/empty.png')
+        self.b1 = Button(self.m_frame, textvariable=self.str1, bg='white', image=self.img1, compound='top')
+        if self.has_game(date_format([day + 1, month, year])):
+            self.img2 = PhotoImage(file='images/' + self.game_index(date_format([day + 1, month, year]))[1] +
+                                        '_logo.png')
+        else:
+            self.img2 = PhotoImage(file='images/empty.png')
+        self.b2 = Button(self.m_frame, textvariable=self.str2, bg='white', image=self.img2, compound='top')
+        if self.has_game(date_format([day + 2, month, year])):
+            self.img3 = PhotoImage(file='images/' + self.game_index(date_format([day + 2, month, year]))[1] +
+                                        '_logo.png')
+        else:
+            self.img3 = PhotoImage(file='images/empty.png')
+        self.b3 = Button(self.m_frame, textvariable=self.str3, bg='white', image=self.img3, compound='top')
+        if self.has_game(date_format([day + 3, month, year])):
+            self.img4 = PhotoImage(file='images/' + self.game_index(date_format([day + 3, month, year]))[1] +
+                                        '_logo.png')
+        else:
+            self.img4 = PhotoImage(file='images/empty.png')
+        self.b4 = Button(self.m_frame, textvariable=self.str4, bg='white', image=self.img4, compound='top')
+        if self.has_game(date_format([day + 4, month, year])):
+            self.img5 = PhotoImage(file='images/' + self.game_index(date_format([day + 4, month, year]))[1] +
+                                        '_logo.png')
+        else:
+            self.img5 = PhotoImage(file='images/empty.png')
+        self.b5 = Button(self.m_frame, textvariable=self.str5, bg='white', image=self.img5, compound='top')
+        for btn in [self.b1, self.b2, self.b3, self.b4, self.b5]:
+            btn.pack(side=LEFT)
+        # self.b1 = Button(self, text="Hello, world", image=self.image, compound="left")
 
     def trader(self):
         clear_root(self.root)
         Trades(self.root, self.team)
-        self.repack()
+        Season(self.root, self.team)
 
-    def repack(self):
-        return
+    def has_game(self, date):
+        for i in range(len(date)):
+            date[i] = str(date[i])
+            if len(date[i]) == 1:
+                date[i] = '0' + date[i]
+        return '/'.join(date) in [x[0] for x in self.team_schedule]
+
+    def game_index(self, date):
+        """returns index and opponent of a game given a date"""
+        for i in range(len(date)):
+            date[i] = str(date[i])
+            if len(date[i]) == 1:
+                date[i] = '0' + date[i]
+        index = [x[0] for x in self.team_schedule].index('/'.join(date))
+        if team_id[self.team_schedule[index][1]] == self.team:
+            _opp = team_id[self.team_schedule[index][2]]
+        else:
+            _opp = team_id[self.team_schedule[index][1]]
+        return [index, _opp]
+
+
+def date_format(date):
+    """keeps days and months under their maximums"""
+    d = date[0]
+    m = date[1]
+    y = date[2]
+    if days[m] < d:
+        d -= days[m]
+        m += 1
+    if m > 12:
+        m = 1
+        y += 1
+    return [d, m, y]
 
 
 def adjust_usage(team):
@@ -492,7 +596,7 @@ def main():
     root.mainloop()
 
 
-"""## NBA game
+"""# NBA game
 def game(team_1, team_2):
     score_1 = 0
     score_2 = 0
@@ -508,7 +612,7 @@ def game(team_1, team_2):
         possession = quarter % 2
         while time > 0:
             pl = play(teams[possession], top_3[teams[possession]], role_player)
-            if pl[0] == True:
+            if pl[0]:
                 if pl[1] == 2:
                     scores[possession] += 2
                 else:
@@ -517,34 +621,37 @@ def game(team_1, team_2):
             possession = (possession + 1) % 2
     if scores[0] == scores[1]:
         scores = overtime(team_1, team_2, scores[0])
-    ##    players = []
-    ##    for team in teams:
-    ##        for player in top_3[team]:
-    ##            players.append(player[0])
-    ##    for player in players:
-    ##        pts = stats[player][0][0] * 2 + stats[player][1][0] * 3
-    ##        ast = stats[player][2]
-    ##        print(player,pts,"pts",ast,'ast')
+    #    players = []
+    #    for team in teams:
+    #        for player in top_3[team]:
+    #            players.append(player[0])
+    #    for player in players:
+    #        pts = stats[player][0][0] * 2 + stats[player][1][0] * 3
+    #        ast = stats[player][2]
+    #        print(player,pts,"pts",ast,'ast')
     return scores
 
-## determines whether the shooter shoots a two or three pointer
+
+# determines whether the shooter shoots a two or three pointer
 def shot_type(tendencies):
     _2pt_ = tendencies[0]
     _3pt_ = tendencies[1]
-    if dec(_2pt_ / (_2pt_ + _3pt_)) == True:
+    if dec(_2pt_ / (_2pt_ + _3pt_)):
         return _2pt_
     return _3pt_
 
-## returns a true or false depending on a given probability
+
+# returns a true or false depending on a given probability
 def dec(probability):
     return random.random() < probability
 
-##determines shooter based on usage rates
+
+# determines shooter based on usage rates
 def sh(rates):
-    zero = range(0,int(100*rates[0]))
-    one = range(int(rates[0]*100),int(100*rates[0]+100*rates[1]))
-    two = range(int(100*rates[0]+100*rates[1]),int(100*rates[0]+100*rates[1]+100*rates[2]))
-    three = range(int(100*rates[0]+100*rates[1]+100*rates[2]),101)
+    zero = range(0, int(100*rates[0]))
+    one = range(int(rates[0]*100), int(100*rates[0]+100*rates[1]))
+    two = range(int(100*rates[0]+100*rates[1]), int(100*rates[0]+100*rates[1]+100*rates[2]))
+    # three = range(int(100*rates[0]+100*rates[1]+100*rates[2]), 101)
     rd = int(100*random.random())
     if rd in zero:
         return 0
@@ -555,72 +662,74 @@ def sh(rates):
     else:
         return 3
 
-## determines a made or missed shot, what type of shot it was, who shot it, etc
-def play(team,teamlist,rp):
+
+# determines a made or missed shot, what type of shot it was, who shot it, etc
+def play(team, teamlist, rp):
     shooter = sh(usage_r[team])
-    ## 0 = 1st option, 1 = 2nd option, 2 = 3rd option, 3 = role player
+    # 0 = 1st option, 1 = 2nd option, 2 = 3rd option, 3 = role player
     if shooter == 3:
         _shot_ = rp[1].index(shot_type(rp[1]))
         make = dec(rp[0][_shot_])
-        if make == True:
+        if make:
             if _shot_ == 0:
-                return [True,2]
+                return [True, 2]
             else:
-                return [True,3]
+                return [True, 3]
         else:
             if _shot_ == 0:
-                return [False,2]
+                return [False, 2]
             else:
-                return [False,3]
+                return [False, 3]
     else:
         p_stats = teamlist[shooter]
-        if dec(p_stats[1][2]) == False:
+        if not dec(p_stats[1][2]):
             _shot_ = rp[1].index(shot_type(rp[1]))
             make = dec(rp[0][_shot_])
-            if make == True:
+            if make:
                 stats[p_stats[0]][2] += 1
                 if _shot_ == 0:
-                    return [True,2]
+                    return [True, 2]
                 else:
-                    return [True,3]
+                    return [True, 3]
             else:
                 if _shot_ == 0:
-                    return [False,2]
+                    return [False, 2]
                 else:
-                    return [False,3]
+                    return [False, 3]
         else:
             _shot_ = p_stats[2].index(shot_type(p_stats[2]))
             make = dec(p_stats[1][_shot_])
-            if make == True:
+            if make:
                 if _shot_ == 0:
                     stats[p_stats[0]][0][0] += 1
                     stats[p_stats[0]][0][1] += 1
-                    return [True,2]
+                    return [True, 2]
                 else:
                     stats[p_stats[0]][1][0] += 1
                     stats[p_stats[0]][1][1] += 1
-                    return [True,3]
+                    return [True, 3]
             else:
                 if _shot_ == 0:
                     stats[p_stats[0]][0][1] += 1
-                    return [False,2]
+                    return [False, 2]
                 else:
                     stats[p_stats[0]][1][1] += 1
-                    return [False,3]
+                    return [False, 3]
 
-## tied games settled in overtime
-def overtime(t1,t2,score):
-    teams = [t1,t2]
+
+# tied games settled in overtime
+def overtime(t1, t2, score):
+    teams = [t1, t2]
     score_1 = score
     score_2 = score
-    scores = [score_1,score_2]
-    role_player = [[.41,.33],[4.1,1.3]]
+    scores = [score_1, score_2]
+    role_player = [[.41, .33], [4.1, 1.3]]
     while scores[0] == scores[1]:
         time = 5 * 60
         possession = 1
         while time > 0:
-            pl = play(teams[possession],top_3[teams[possession]],role_player)
-            if pl[0] == True:
+            pl = play(teams[possession], top_3[teams[possession]], role_player)
+            if pl[0]:
                 if pl[1] == 2:
                     scores[possession] += 2
                 else:
@@ -629,52 +738,24 @@ def overtime(t1,t2,score):
             possession = (possession + 1) % 2
     return scores
 
+
 main()
 
-schedules = {'76ers':[t[2]]*4+[t[3]]*3+[t[4]]*4+[t[5]]*4+[t[6]]*2+[t[7]]*2+[t[8]]*3+[t[9]]*4+[t[10]]*4+[t[11]]*2+[t[12]]*2+[t[13]]*4+[t[14]]*2+[t[15]]*3+[t[16]]*2+[t[17]]*4+[t[18]]*2+[t[19]]*3+[t[20]]*2+[t[21]]*4+[t[22]]*4+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*4,\
-                 'Bucks':[t[3]]*4+[t[4]]*4+[t[5]]*4+[t[6]]*2+[t[7]]*2+[t[8]]*3+[t[9]]*3+[t[10]]*4+[t[11]]*2+[t[12]]*2+[t[13]]*4+[t[14]]*2+[t[15]]*4+[t[16]]*2+[t[17]]*3+[t[18]]*2+[t[19]]*4+[t[20]]*2+[t[21]]*4+[t[22]]*3+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*4,\
-                 'Bulls':[t[4]]*4+[t[5]]*4+[t[6]]*2+[t[7]]*2+[t[8]]*3+[t[9]]*4+[t[10]]*4+[t[11]]*2+[t[12]]*2+[t[13]]*4+[t[14]]*2+[t[15]]*4+[t[16]]*2+[t[17]]*3+[t[18]]*2+[t[19]]*4+[t[20]]*2+[t[21]]*4+[t[22]]*4+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*3,\
-                 'Cavaliers':[t[5]]*3+[t[6]]*2+[t[7]]*2+[t[8]]*4+[t[9]]*3+[t[10]]*3+[t[11]]*2+[t[12]]*2+[t[13]]*4+[t[14]]*2+[t[15]]*4+[t[16]]*2+[t[17]]*4+[t[18]]*2+[t[19]]*4+[t[20]]*2+[t[21]]*4+[t[22]]*3+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*4,\
-                 'Celtics':[t[6]]*2+[t[7]]*2+[t[8]]*4+[t[9]]*3+[t[10]]*3+[t[11]]*2+[t[12]]*2+[t[13]]*4+[t[14]]*2+[t[15]]*4+[t[16]]*2+[t[17]]*4+[t[18]]*2+[t[19]]*4+[t[20]]*2+[t[21]]*3+[t[22]]*4+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*4,\
-                 'Clippers':[t[7]]*4+[t[8]]*2+[t[9]]*2+[t[10]]*2+[t[11]]*4+[t[12]]*4+[t[13]]*2+[t[14]]*4+[t[15]]*2+[t[16]]*3+[t[17]]*2+[t[18]]*3+[t[19]]*2+[t[20]]*4+[t[21]]*2+[t[22]]*2+[t[23]]*4+[t[24]]*3+[t[25]]*4+[t[26]]*3+[t[27]]*4+[t[28]]*4+[t[29]]*4+[t[30]]*2,\
-                 'Grizzlies':[t[8]]*2+[t[9]]*2+[t[10]]*2+[t[11]]*3+[t[12]]*3+[t[13]]*2+[t[14]]*4+[t[15]]*2+[t[16]]*4+[t[17]]*2+[t[18]]*4+[t[19]]*2+[t[20]]*4+[t[21]]*2+[t[22]]*2+[t[23]]*4+[t[24]]*4+[t[25]]*4+[t[26]]*4+[t[27]]*3+[t[28]]*4+[t[29]]*3+[t[30]]*2,\
-                 'Hawks':[t[9]]*4+[t[10]]*4+[t[11]]*2+[t[12]]*2+[t[13]]*3+[t[14]]*2+[t[15]]*4+[t[16]]*2+[t[17]]*4+[t[18]]*2+[t[19]]*4+[t[20]]*2+[t[21]]*4+[t[22]]*4+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*4,\
-                 'Heat':[t[10]]*4+[t[11]]*2+[t[12]]*2+[t[13]]*4+[t[14]]*2+[t[15]]*4+[t[16]]*2+[t[17]]*4+[t[18]]*2+[t[19]]*4+[t[20]]*2+[t[21]]*4+[t[22]]*3+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*4,\
-                 'Hornets':[t[11]]*2+[t[12]]*2+[t[13]]*4+[t[14]]*2+[t[15]]*4+[t[16]]*2+[t[17]]*3+[t[18]]*2+[t[19]]*4+[t[20]]*2+[t[21]]*3+[t[22]]*4+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*4,\
-                 'Jazz':[t[12]]*3+[t[13]]*2+[t[14]]*3+[t[15]]*2+[t[16]]*3+[t[17]]*2+[t[18]]*4+[t[19]]*2+[t[20]]*4+[t[21]]*2+[t[22]]*2+[t[23]]*4+[t[24]]*4+[t[25]]*4+[t[26]]*4+[t[27]]*4+[t[28]]*4+[t[29]]*4+[t[30]]*2,\
-                 'Kings':[t[13]]*2+[t[14]]*4+[t[15]]*2+[t[16]]*4+[t[17]]*2+[t[18]]*4+[t[19]]*2+[t[20]]*4+[t[21]]*2+[t[22]]*2+[t[23]]*3+[t[24]]*4+[t[25]]*4+[t[26]]*4+[t[27]]*3+[t[28]]*4+[t[29]]*4+[t[30]]*2,\
-                 'Knicks':[t[14]]*2+[t[15]]*4+[t[16]]*2+[t[17]]*4+[t[18]]*2+[t[19]]*3+[t[20]]*2+[t[21]]*3+[t[22]]*4+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*3,\
-                 'Lakers':[t[15]]*2+[t[16]]*4+[t[17]]*2+[t[18]]*4+[t[19]]*2+[t[20]]*3+[t[21]]*2+[t[22]]*2+[t[23]]*4+[t[24]]*3+[t[25]]*4+[t[26]]*4+[t[27]]*4+[t[28]]*3+[t[29]]*4+[t[30]]*2,\
-                 'Magic':[t[16]]*2+[t[17]]*4+[t[18]]*2+[t[19]]*3+[t[20]]*2+[t[21]]*3+[t[22]]*3+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*4,\
-                 'Mavericks':[t[17]]*2+[t[18]]*4+[t[19]]*2+[t[20]]*4+[t[21]]*2+[t[22]]*2+[t[23]]*4+[t[24]]*4+[t[25]]*3+[t[26]]*4+[t[27]]*4+[t[28]]*3+[t[29]]*4+[t[30]]*2,\
-                 'Nets':[t[18]]*2+[t[19]]*4+[t[20]]*2+[t[21]]*4+[t[22]]*4+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*3,\
-                 'Nuggets':[t[19]]*2+[t[20]]*3+[t[21]]*2+[t[22]]*2+[t[23]]*3+[t[24]]*4+[t[25]]*3+[t[26]]*4+[t[27]]*4+[t[28]]*4+[t[29]]*4+[t[30]]*2,\
-                 'Pacers':[t[20]]*2+[t[21]]*4+[t[22]]*4+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*3,\
-                 'Pelicans':[t[21]]*2+[t[22]]*2+[t[23]]*4+[t[24]]*4+[t[25]]*3+[t[26]]*3+[t[27]]*4+[t[28]]*4+[t[29]]*4+[t[30]]*2,\
-                 'Pistons':[t[22]]*4+[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*4,\
-                 'Raptors':[t[23]]*2+[t[24]]*2+[t[25]]*2+[t[26]]*2+[t[27]]*2+[t[28]]*2+[t[29]]*2+[t[30]]*4,\
-                 'Rockets':[t[24]]*4+[t[25]]*4+[t[26]]*3+[t[27]]*4+[t[28]]*4+[t[29]]*3+[t[30]]*2,\
-                 'Spurs':[t[25]]*4+[t[26]]*4+[t[27]]*3+[t[28]]*3+[t[29]]*4+[t[30]]*2,\
-                 'Suns':[t[26]]*3+[t[27]]*4+[t[28]]*4+[t[29]]*4+[t[30]]*2,\
-                 'Thunder':[t[27]]*4+[t[28]]*4+[t[29]]*4+[t[30]]*2,\
-                 'Timberwolves':[t[28]]*4+[t[29]]*3+[t[30]]*2,\
-                 'Trail Blazers':[t[29]]*3+[t[30]]*2,\
-                 'Warriors':[t[30]]*2,\
-                 'Wizards':[]}
 for _game_ in bv.schedule:
-    team = team_id[_game_[1]]
+    h_team = team_id[_game_[1]]
     opp = team_id[_game_[2]]
-    g = game(team,opp)
-    for i in range(2):
-        t_stats[team][1][i] += g[i]
-        t_stats[opp][1][i] += g[(i+1) % 2]
+    g = game(h_team, opp)
+    for _i_ in range(2):
+        t_stats[h_team][1][_i_] += g[_i_]
+        t_stats[opp][1][_i_] += g[(_i_+1) % 2]
     if g[0] > g[1]:
-        t_stats[team][0][0] += 1
+        t_stats[h_team][0][0] += 1
         t_stats[opp][0][1] += 1
     elif g[0] < g[1]:
-        t_stats[team][0][1] += 1
-        t_stats[opp][0][0] += 1"""
-
+        t_stats[h_team][0][1] += 1
+        t_stats[opp][0][0] += 1
+"""
 main()
+
 # for tm in t_stats:
-#    print(t_stats[tm])
+#   print(tm, t_stats[tm])
