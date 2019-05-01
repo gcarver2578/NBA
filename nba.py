@@ -177,8 +177,12 @@ day = 14
 year = 2018
 
 days = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
-month_abbreviations = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May',
+month_abbreviations1 = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May',
                        6: 'June', 7: 'July', 8: 'Aug', 9: 'Sept', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
+month_abbreviations = {}
+for key in month_abbreviations1:
+    month_abbreviations[key] = month_abbreviations1[key]
+    month_abbreviations[month_abbreviations1[key]] = key
 
 
 class Start:
@@ -464,39 +468,42 @@ class Season:
                                         '_logo.png')
         else:
             self.img1 = PhotoImage(file='images/empty.png')
-        self.b1 = Button(self.m_frame, textvariable=self.str1, bg='white', image=self.img1, compound='top')
+        self.b1 = Button(self.m_frame, textvariable=self.str1, bg='white', image=self.img1, compound='top',
+                         command=lambda s=self.str1.get(): self.sim_to(s))
         if self.has_game(date_format([day + 1, month, year])):
             self.img2 = PhotoImage(file='images/' + self.game_index(date_format([day + 1, month, year]))[1] +
                                         '_logo.png')
         else:
             self.img2 = PhotoImage(file='images/empty.png')
-        self.b2 = Button(self.m_frame, textvariable=self.str2, bg='white', image=self.img2, compound='top')
+        self.b2 = Button(self.m_frame, textvariable=self.str2, bg='white', image=self.img2, compound='top',
+                         command=lambda s=self.str2.get(): self.sim_to(s))
         if self.has_game(date_format([day + 2, month, year])):
             self.img3 = PhotoImage(file='images/' + self.game_index(date_format([day + 2, month, year]))[1] +
                                         '_logo.png')
         else:
             self.img3 = PhotoImage(file='images/empty.png')
-        self.b3 = Button(self.m_frame, textvariable=self.str3, bg='white', image=self.img3, compound='top')
+        self.b3 = Button(self.m_frame, textvariable=self.str3, bg='white', image=self.img3, compound='top',
+                         command=lambda s=self.str3.get(): self.sim_to(s))
         if self.has_game(date_format([day + 3, month, year])):
             self.img4 = PhotoImage(file='images/' + self.game_index(date_format([day + 3, month, year]))[1] +
                                         '_logo.png')
         else:
             self.img4 = PhotoImage(file='images/empty.png')
-        self.b4 = Button(self.m_frame, textvariable=self.str4, bg='white', image=self.img4, compound='top')
+        self.b4 = Button(self.m_frame, textvariable=self.str4, bg='white', image=self.img4, compound='top',
+                         command=lambda s=self.str4.get(): self.sim_to(s))
         if self.has_game(date_format([day + 4, month, year])):
             self.img5 = PhotoImage(file='images/' + self.game_index(date_format([day + 4, month, year]))[1] +
                                         '_logo.png')
         else:
             self.img5 = PhotoImage(file='images/empty.png')
-        self.b5 = Button(self.m_frame, textvariable=self.str5, bg='white', image=self.img5, compound='top')
+        self.b5 = Button(self.m_frame, textvariable=self.str5, bg='white', image=self.img5, compound='top',
+                         command= lambda s=self.str5.get(): self.sim_to(s))
         for btn in [self.b1, self.b2, self.b3, self.b4, self.b5]:
             btn.pack(side=LEFT)
-        # self.b1 = Button(self, text="Hello, world", image=self.image, compound="left")
 
     def trader(self):
         clear_root(self.root)
         Trades(self.root, self.team)
-        Season(self.root, self.team)
 
     def has_game(self, date):
         for i in range(len(date)):
@@ -517,6 +524,12 @@ class Season:
         else:
             _opp = team_id[self.team_schedule[index][1]]
         return [index, _opp]
+
+    def sim_to(self, date):
+        for btn in [self.b1, self.b2, self.b3, self.b4, self.b5]:
+            btn.config(state=DISABLED)
+        print(date)
+        return
 
 
 def date_format(date):
