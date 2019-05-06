@@ -2,6 +2,7 @@
 from tkinter import *
 import random
 import big_variables as bv
+import time as _time_
 
 atlantic = ['76ers', 'Celtics', 'Knicks', 'Nets', 'Raptors']
 central = ['Bucks', 'Bulls', 'Cavaliers', 'Pacers', 'Pistons']
@@ -176,9 +177,11 @@ month = 10
 day = 14
 year = 2018
 
+prev_res = []
+
 days = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
 month_abbreviations1 = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May',
-                       6: 'June', 7: 'July', 8: 'Aug', 9: 'Sept', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
+                        6: 'June', 7: 'July', 8: 'Aug', 9: 'Sept', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
 month_abbreviations = {}
 for key in month_abbreviations1:
     month_abbreviations[key] = month_abbreviations1[key]
@@ -280,7 +283,7 @@ class Trades:
     """used for making trades during the season"""
     def __init__(self, root, team):
         self.root = root
-        self.root.configure(bg='grey')
+        self.root.configure(bg='white')
         self.team = team
         self.l_frame = Frame(self.root, bg='white')
         self.m_frame = Frame(self.root, bg='white')
@@ -330,7 +333,7 @@ class Trades:
         self.selected_buttons = []
         for item in self.img_list:
             self.img_list.remove(item)
-        for _tm, frame, pad in [(self.team, self.l_frame, (260, 0)), (team, self.r_frame, (0, 260))]:
+        for _tm, frame in [(self.team, self.l_frame), (team, self.r_frame)]:
             for widget in frame.winfo_children():
                 widget.destroy()
             for player in top_3[_tm]:
@@ -341,9 +344,11 @@ class Trades:
                     self.img_list.append(PhotoImage(file='images/red x 2.png'))
                 self.b_list.append((Button(frame, image=self.img_list[-1], bg='white', text=player[0], borderwidth=5),
                                     player[0]))
+                name_lbl = Label(frame, text=player[0], bg='white')
                 lbl = Label(frame, text=stats_str(player[0]), bg='white')
-                self.b_list[-1][0].pack(side=TOP, padx=pad)
-                lbl.pack(side=TOP, padx=pad)
+                name_lbl.pack(side=TOP)
+                self.b_list[-1][0].pack(side=TOP)
+                lbl.pack(side=TOP)
         self.b1 = self.b_list[0][0]
         self.b2 = self.b_list[1][0]
         self.b3 = self.b_list[2][0]
@@ -390,16 +395,15 @@ class Trades:
                 temp_id = t_1
                 team_id[p_1] = t_2
                 team_id[p_2] = temp_id
-            if t_1 != '' and t_2 != '':
-                adjust_usage(t_1)
-                adjust_usage(t_2)
+            adjust_usage(t_1)
+            adjust_usage(t_2)
             self.disp_team(t_2)
         else:
             self.str_v.set('Trade declined.')
             self.declined_trades.append(sorted(self.selected_buttons))
 
     def trade_accepted(self):
-        if sorted(self.selected_buttons) in self.declined_trades:
+        if sorted(self.selected_buttons) in self.declined_trades or len(self.selected_buttons) == 0:
             return False
         t_1_ps = 0
         t_2_ps = 0
@@ -427,32 +431,62 @@ class Trades:
 
 class Season:
     def __init__(self, root, team):
-        global day
-        global month
-        global year
+        global day, month, year, prev_res
         self.team = team
         self.root = root
-        self.lbl = Label(self.root, text='Hello there.')
+        self.root.configure(bg='black')
+        self.lbl_var = StringVar()
+        self.lbl_var.set(month_abbreviations[month] + ' ' + str(year))
+        self.lbl = Label(self.root, textvariable=self.lbl_var, bg='black', fg='white', font=('Courier', 25))
         self.lbl.pack(side=TOP)
-        self.trade_btn = Button(self.root, text='Trade', bg='blue', fg='white',
-                                command=lambda: self.trader())
-        self.trade_btn.pack(side=TOP)
-        self.m_frame = Frame(self.root)
+        self.m_frame = Frame(self.root, bg='black')
         self.m_frame.pack(side=TOP)
+        self.b1_frame = Frame(self.root, bg='black')
+        self.b1_frame.pack(side=TOP)
+        self.b_frame = Frame(self.root, bg='black')
+        self.b_frame.pack(side=TOP)
+        self.b1_t_frame = Frame(self.b1_frame, bg='black')
+        self.b1_b_frame = Frame(self.b1_frame, bg='black')
+        self.b1_t_frame.pack(side=TOP)
+        self.b1_b_frame.pack(side=TOP)
+        self.trade_btn = Button(self.b1_t_frame, text='Trade', bg='blue', fg='white', font=('Courier', 25),
+                                command=lambda: self.trader())
+        self.standings_btn = Button(self.b1_t_frame, text='Standings', bg=rgb((0, 200, 0)), fg='white',
+                                    font=('Courier', 25), command=lambda: self.check_standings())
+        self.asb_btn = Button(self.b1_b_frame, text='Sim to All Star Break', bg=rgb((255, 200, 0)), fg='white',
+                              font=('Courier', 25), command=lambda: self.sim_to('Feb 17', speed=.075, disable=True))
+        # self.asb_btn = Button(self.b1_b_frame, text='Sim to All Star Break', bg=rgb((255, 200, 0)), fg='white',
+        #                       font=('Courier', 25), command=lambda: self.sim_to('Feb 17', speed=.075, disable=True))
+        self.playoffs_btn = Button(self.b1_t_frame, text='Sim to Playoffs', bg=rgb((0, 200, 0)), fg='white',
+                                   font=('Courier', 25), command=lambda: self.sim_to('Apr 11',
+                                                                                     speed=.075, disable=True))
+        self.exit_btn = Button(self.b1_b_frame, text='Exit', bg=rgb((255, 0, 0)), fg='white',
+                               font=('Courier', 25), command=lambda: self.check_end_prgm())
+        for btn in [self.trade_btn, self.standings_btn, self.asb_btn, self.playoffs_btn, self.exit_btn]:
+            btn.pack(side=LEFT)
+        if after(btn_date([day, month, year]), 'Feb 17'):
+            self.asb_btn.destroy()
         self.team_schedule = [x for x in bv.schedule if cities[self.team] + ' ' + self.team in x]
         # for loop causes too many issues, just listed out all buttons
+        self.ranks = []
+        self.east_ranks = []
+        self.west_ranks = []
+        self.update_ranks()
         self.b1 = ''
         self.b2 = ''
         self.b3 = ''
         self.b4 = ''
         self.b5 = ''
         self.b6 = ''
+        self.b7 = ''
         self.img1, self.img2, self.img3, self.img4, self.img5 = [''] * 5
         self.str1 = StringVar()
         self.str2 = StringVar()
         self.str3 = StringVar()
         self.str4 = StringVar()
         self.str5 = StringVar()
+        self.str6 = StringVar()
+        self.str7 = StringVar()
         self.str1.set(month_abbreviations[date_format([day, month, year])[1]] + ' ' +
                       str(date_format([day, month, year])[0]))
         self.str2.set(month_abbreviations[date_format([day + 1, month, year])[1]] + ' ' +
@@ -463,43 +497,67 @@ class Season:
                       str(date_format([day + 3, month, year])[0]))
         self.str5.set(month_abbreviations[date_format([day + 4, month, year])[1]] + ' ' +
                       str(date_format([day + 4, month, year])[0]))
+        self.str6.set(month_abbreviations[date_format([day + 5, month, year])[1]] + ' ' +
+                      str(date_format([day + 5, month, year])[0]))
+        self.str7.set(month_abbreviations[date_format([day + 6, month, year])[1]] + ' ' +
+                      str(date_format([day + 6, month, year])[0]))
         if self.has_game(date_format([day, month, year])):
             self.img1 = PhotoImage(file='images/' + self.game_index(date_format([day, month, year]))[1] +
                                         '_logo.png')
         else:
             self.img1 = PhotoImage(file='images/empty.png')
         self.b1 = Button(self.m_frame, textvariable=self.str1, bg='white', image=self.img1, compound='top',
-                         command=lambda s=self.str1.get(): self.sim_to(s))
+                         command=lambda s=self.str1.get(): self.sim_to(s, disable=True))
         if self.has_game(date_format([day + 1, month, year])):
             self.img2 = PhotoImage(file='images/' + self.game_index(date_format([day + 1, month, year]))[1] +
                                         '_logo.png')
         else:
             self.img2 = PhotoImage(file='images/empty.png')
         self.b2 = Button(self.m_frame, textvariable=self.str2, bg='white', image=self.img2, compound='top',
-                         command=lambda s=self.str2.get(): self.sim_to(s))
+                         command=lambda s=self.str2.get(): self.sim_to(s, disable=True))
         if self.has_game(date_format([day + 2, month, year])):
             self.img3 = PhotoImage(file='images/' + self.game_index(date_format([day + 2, month, year]))[1] +
                                         '_logo.png')
         else:
             self.img3 = PhotoImage(file='images/empty.png')
         self.b3 = Button(self.m_frame, textvariable=self.str3, bg='white', image=self.img3, compound='top',
-                         command=lambda s=self.str3.get(): self.sim_to(s))
+                         command=lambda s=self.str3.get(): self.sim_to(s, disable=True))
         if self.has_game(date_format([day + 3, month, year])):
             self.img4 = PhotoImage(file='images/' + self.game_index(date_format([day + 3, month, year]))[1] +
                                         '_logo.png')
         else:
             self.img4 = PhotoImage(file='images/empty.png')
         self.b4 = Button(self.m_frame, textvariable=self.str4, bg='white', image=self.img4, compound='top',
-                         command=lambda s=self.str4.get(): self.sim_to(s))
+                         command=lambda s=self.str4.get(): self.sim_to(s, disable=True))
         if self.has_game(date_format([day + 4, month, year])):
             self.img5 = PhotoImage(file='images/' + self.game_index(date_format([day + 4, month, year]))[1] +
                                         '_logo.png')
         else:
             self.img5 = PhotoImage(file='images/empty.png')
         self.b5 = Button(self.m_frame, textvariable=self.str5, bg='white', image=self.img5, compound='top',
-                         command= lambda s=self.str5.get(): self.sim_to(s))
-        for btn in [self.b1, self.b2, self.b3, self.b4, self.b5]:
+                         command=lambda s=self.str5.get(): self.sim_to(s, disable=True))
+        if self.has_game(date_format([day + 5, month, year])):
+            self.img6 = PhotoImage(file='images/' + self.game_index(date_format([day + 5, month, year]))[1] +
+                                        '_logo.png')
+        else:
+            self.img6 = PhotoImage(file='images/empty.png')
+        self.b6 = Button(self.m_frame, textvariable=self.str6, bg='white', image=self.img6, compound='top',
+                         command=lambda s=self.str6.get(): self.sim_to(s, disable=True))
+        if self.has_game(date_format([day + 6, month, year])):
+            self.img7 = PhotoImage(file='images/' + self.game_index(date_format([day + 6, month, year]))[1] +
+                                        '_logo.png')
+        else:
+            self.img7 = PhotoImage(file='images/empty.png')
+        self.b7 = Button(self.m_frame, textvariable=self.str7, bg='white', image=self.img7, compound='top',
+                         command=lambda s=self.str7.get(): self.sim_to(s, disable=True))
+        for btn in [self.b1, self.b2, self.b3, self.b4, self.b5, self.b6, self.b7]:
+            btn.configure(font=(btn['font'][0], 13), borderwidth=5)
             btn.pack(side=LEFT)
+        self.stats_str = StringVar()
+        self.stats_str.set('')
+        self.stats_lbl = Label(self.b_frame, textvariable=self.stats_str, bg='black', fg='white', font=('Courier', 20))
+        self.stats_lbl.pack(side=TOP)
+        self.stat_maker()
 
     def trader(self):
         clear_root(self.root)
@@ -525,11 +583,222 @@ class Season:
             _opp = team_id[self.team_schedule[index][1]]
         return [index, _opp]
 
-    def sim_to(self, date):
-        for btn in [self.b1, self.b2, self.b3, self.b4, self.b5]:
+    def sim_to(self, date, speed=.15, disable=False):
+        global day, month, year, prev_res
+        if after(date, 'Feb 16'):
+            self.asb_btn.destroy()
+            self.asb_btn.update()
+        if after(date, 'Apr 10'):
+            self.playoffs_btn.destroy()
+            self.playoffs_btn.update()
+            self.trade_btn.destroy()
+            self.trade_btn.update()
+        if disable:
+            for btn in [self.trade_btn, self.playoffs_btn, self.exit_btn, self.standings_btn]:
+                try:
+                    btn.config(state=DISABLED)
+                except TclError:
+                    continue
+        for btn in [self.b1, self.b2, self.b3, self.b4, self.b5, self.b6, self.b7]:
             btn.config(state=DISABLED)
-        print(date)
-        return
+        self.lbl_var.set('Simulating...')
+        self.root.update_idletasks()
+        while btn_date([day, month, year]) != date:
+            _time_.sleep(speed)
+            for _date, h_team, a_team in [g for g in bv.schedule if date_to_str([day, month, year]) == g[0]]:
+                h_team = team_id[h_team]
+                opp = team_id[a_team]
+                g = game(h_team, opp)
+                for _i_ in range(2):
+                    t_stats[h_team][1][_i_] += g[_i_]
+                    t_stats[opp][1][_i_] += g[(_i_ + 1) % 2]
+                if g[0] > g[1]:
+                    t_stats[h_team][0][0] += 1
+                    t_stats[opp][0][1] += 1
+                    if h_team == self.team:
+                        prev_res.insert(0, 'W ' + str(g[0]) + ' - ' + str(g[1]) + ' vs. ' + opp + ', ' +
+                                        btn_date([int(x) for x in _date.split('/')]))
+                    elif opp == self.team:
+                        prev_res.insert(0, 'L ' + str(g[0]) + ' - ' + str(g[1]) + ' @ ' + h_team + ', ' +
+                                        btn_date([int(x) for x in _date.split('/')]))
+                elif g[0] < g[1]:
+                    t_stats[h_team][0][1] += 1
+                    t_stats[opp][0][0] += 1
+                    if h_team == self.team:
+                        prev_res.insert(0, 'L ' + str(g[0]) + ' - ' + str(g[1]) + ' vs. ' + opp + ', ' +
+                                        btn_date([int(x) for x in _date.split('/')]))
+                    elif opp == self.team:
+                        prev_res.insert(0, 'W ' + str(g[0]) + ' - ' + str(g[1]) + ' @ ' + h_team + ', ' +
+                                        btn_date([int(x) for x in _date.split('/')]))
+                if len(prev_res) > 3:
+                    prev_res = prev_res[:-1][:]
+            self.img1 = self.img2
+            self.img2 = self.img3
+            self.img3 = self.img4
+            self.img4 = self.img5
+            self.img5 = self.img6
+            self.img6 = self.img7
+            self.str1.set(month_abbreviations[date_format([day + 1, month, year])[1]] + ' ' +
+                          str(date_format([day + 1, month, year])[0]))
+            self.str2.set(month_abbreviations[date_format([day + 2, month, year])[1]] + ' ' +
+                          str(date_format([day + 2, month, year])[0]))
+            self.str3.set(month_abbreviations[date_format([day + 3, month, year])[1]] + ' ' +
+                          str(date_format([day + 3, month, year])[0]))
+            self.str4.set(month_abbreviations[date_format([day + 4, month, year])[1]] + ' ' +
+                          str(date_format([day + 4, month, year])[0]))
+            self.str5.set(month_abbreviations[date_format([day + 5, month, year])[1]] + ' ' +
+                          str(date_format([day + 5, month, year])[0]))
+            self.str6.set(month_abbreviations[date_format([day + 6, month, year])[1]] + ' ' +
+                          str(date_format([day + 6, month, year])[0]))
+            self.str7.set(month_abbreviations[date_format([day + 7, month, year])[1]] + ' ' +
+                          str(date_format([day + 7, month, year])[0]))
+            if self.has_game(date_format([day + 7, month, year])):
+                self.img7 = PhotoImage(file='images/' + self.game_index(date_format([day + 7, month, year]))[1] +
+                                            '_logo.png')
+            else:
+                self.img7 = PhotoImage(file='images/empty.png')
+            self.b1.configure(image=self.img1)
+            self.b2.configure(image=self.img2)
+            self.b3.configure(image=self.img3)
+            self.b4.configure(image=self.img4)
+            self.b5.configure(image=self.img5)
+            self.b6.configure(image=self.img6)
+            self.b7.configure(image=self.img7)
+            day, month, year = date_format([day + 1, month, year])
+            self.stat_maker()
+            self.root.update_idletasks()
+        for btn, strv in [(self.b1, self.str1), (self.b2, self.str2), (self.b3, self.str3),
+                          (self.b4, self.str4), (self.b5, self.str5), (self.b6, self.str6), (self.b7, self.str7)]:
+            btn.config(state=NORMAL,
+                       command=lambda s=strv.get(): self.sim_to(s, disable=True))
+        if disable:
+            for btn in [self.trade_btn, self.playoffs_btn, self.exit_btn, self.standings_btn]:
+                try:
+                    btn.config(state=NORMAL)
+                except TclError:
+                    continue
+        self.lbl_var.set(month_abbreviations[month] + ' ' + str(year))
+        if after(date, 'Apr 10'):
+            clear_root(self.root)
+            Playoffs(self.root, self.team, self.east_ranks, self.west_ranks)
+
+    def stat_maker(self):
+        global prev_res
+        """makes stats for label"""
+        self.update_ranks()
+        _st_ = t_stats[self.team]
+        if _st_[2] != 0:
+            wins = _st_[0][0]
+            losses = _st_[0][1]
+        else:
+            wins = 0
+            losses = 0
+        if conf_id[self.team] == 'Eastern':
+            self.stats_str.set('Record: ' + str(wins) + ' - ' + str(losses) + ', '
+                               + ordinal([x[1] for x in self.east_ranks].index(self.team) + 1) + ' in East')
+        else:
+            self.stats_str.set('Record: ' + str(wins) + ' - ' + str(losses) + ', '
+                               + ordinal([x[1] for x in self.west_ranks].index(self.team) + 1) + ' in West')
+        self.update_player_stats()
+        self.stats_str.set(self.stats_str.get() + '\n\nPrevious Results:')
+        for result in prev_res:
+            self.stats_str.set(self.stats_str.get() + '\n' + result)
+
+    def update_player_stats(self):
+        self.stats_str.set(self.stats_str.get() + '\n\nPlayer Stats:')
+        for player in top_3[self.team]:
+            p_name = str(player[0])
+            self.stats_str.set(self.stats_str.get() + '\n' + p_name + ': ' + stats_str(p_name)[:-25])
+
+    def update_ranks(self):
+        self.ranks = sorted([[t_stats[team][0], team] for team in t_stats])
+        self.ranks.reverse()
+        self.east_ranks = sorted([[t_stats[team][0], team] for team in t_stats if conf_id[team] == 'Eastern'])
+        self.east_ranks.reverse()
+        self.west_ranks = sorted([[t_stats[team][0], team] for team in t_stats if conf_id[team] == 'Western'])
+        self.west_ranks.reverse()
+
+    def check_standings(self):
+        self.update_ranks()
+        clear_root(self.root)
+        t_frame = Frame(self.root, bg='black')
+        t_frame.pack(side=TOP)
+        exit_btn = Button(self.root, text='Exit', bg=rgb((225, 0, 0)), fg='white', font=('Courier', 25),
+                          command=lambda: self.rerun())
+        exit_btn.pack(side=TOP)
+        east_var = StringVar()
+        west_var = StringVar()
+        w_lbl = Label(t_frame, bg='black', fg='white', font=('Courier', 20), textvariable=west_var)
+        e_lbl = Label(t_frame, bg='black', fg='white', font=('Courier', 20), textvariable=east_var)
+        w_lbl.pack(side=LEFT)
+        e_lbl.pack(side=LEFT)
+        for conf, ranks, str_v in [['West', self.west_ranks, west_var], ['East', self.east_ranks, east_var]]:
+            str_v.set(conf + ' Standings:\n')
+            for i in range(len(ranks)):
+                team = ranks[i][1]
+                ws = ranks[i][0][0]
+                ls = ranks[i][0][1]
+                str_v.set(str_v.get() + str(i + 1) + '. ' + team + ' ' + str(ws) + ' - ' + str(ls) + '\n')
+
+    def check_end_prgm(self):
+        clear_root(self.root)
+        t_frame = Frame(self.root, bg='black')
+        b_frame = Frame(self.root, bg='black')
+        t_frame.pack(side=TOP)
+        b_frame.pack(side=TOP)
+        lbl = Label(t_frame, text='Are you sure?', font=('Courier', 25), bg='black', fg='white')
+        lbl.pack()
+        y_b = Button(b_frame, text='Yes', bg=rgb((0, 225, 0)), fg='white', font=('Courier', 25),
+                     command=lambda: self.end_prgm())
+        n_b = Button(b_frame, text='Go Back', bg=rgb((225, 0, 0)), fg='white', font=('Courier', 25),
+                     command=lambda: self.rerun())
+        y_b.pack(side=LEFT)
+        n_b.pack(side=LEFT)
+
+    def rerun(self):
+        clear_root(self.root)
+        Season(self.root, self.team)
+
+    def end_prgm(self):
+        clear_root(self.root)
+        self.root.destroy()
+
+
+class Playoffs:
+    """Runs the playoffs"""
+    def __init__(self, root, team, _es_, _ws_):
+        self.root = root
+        self.team = team
+        self.east_seeds = _es_
+        self.west_seeds = _ws_
+
+
+def after(d1, d2):
+    """returns True if date 1 comes after date 2"""
+    m1, d1 = d1.split()
+    m2, d2 = d2.split()
+    m1, m2 = (month_abbreviations[m1], month_abbreviations[m2])
+    if m1 < 7:
+        m1 += 12
+    if m2 < 7:
+        m2 += 12
+    if m1 > m2:
+        return True
+    elif m2 > m1:
+        return False
+    else:
+        return d1 > d2
+
+
+def ordinal(n):
+    if n % 100 in [11, 12, 13]:
+        return str(n) + 'th'
+    return "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1) * (n % 10 < 4) * n % 10::4])
+
+
+def rgb(_rgb):
+    """translates an rgb tuple of int to a tkinter friendly color code"""
+    return "#%02x%02x%02x" % _rgb
 
 
 def date_format(date):
@@ -544,6 +813,21 @@ def date_format(date):
         m = 1
         y += 1
     return [d, m, y]
+
+
+def date_to_str(date):
+    dt = []
+    for item in date:
+        item = str(item)
+        if len(item) == 1:
+            item = '0' + item
+        dt.append(item)
+    return dt[0] + '/' + dt[1] + '/' + dt[2]
+
+
+def btn_date(date):
+    """returns the way the date is written on the button"""
+    return month_abbreviations[date[1]] + ' ' + str(date[0])
 
 
 def adjust_usage(team):
@@ -574,7 +858,8 @@ def stats_str(player):
         fgp = 0
         tpp = 0
         gp = 0
-    c = str(ppg) + ' PPG ' + str(apg) + ' APG ' + str(fgp) + ' FG% ' + str(tpp) + ' 3P% ' + str(gp) + ' Games Played '
+    c = str(ppg) + ' PPG, ' + str(apg) + ' APG, ' + str(fgp) + ' FG%, ' + str(tpp) + ' 3P%, '\
+        + str(gp) + ' Games Played, '
     try:
         c = c + str(top_3[team_id[player]][team_index(player)][3]) + ' OVR'
     except IndexError:
@@ -609,7 +894,7 @@ def main():
     root.mainloop()
 
 
-"""# NBA game
+# NBA game
 def game(team_1, team_2):
     score_1 = 0
     score_2 = 0
@@ -752,22 +1037,6 @@ def overtime(t1, t2, score):
     return scores
 
 
-main()
-
-for _game_ in bv.schedule:
-    h_team = team_id[_game_[1]]
-    opp = team_id[_game_[2]]
-    g = game(h_team, opp)
-    for _i_ in range(2):
-        t_stats[h_team][1][_i_] += g[_i_]
-        t_stats[opp][1][_i_] += g[(_i_+1) % 2]
-    if g[0] > g[1]:
-        t_stats[h_team][0][0] += 1
-        t_stats[opp][0][1] += 1
-    elif g[0] < g[1]:
-        t_stats[h_team][0][1] += 1
-        t_stats[opp][0][0] += 1
-"""
 main()
 
 # for tm in t_stats:
