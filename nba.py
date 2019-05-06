@@ -464,8 +464,9 @@ class Season:
                                font=('Courier', 25), command=lambda: self.check_end_prgm())
         for btn in [self.trade_btn, self.standings_btn, self.asb_btn, self.playoffs_btn, self.exit_btn]:
             btn.pack(side=LEFT)
-        if after(btn_date([day, month, year]), 'Feb 17'):
+        if after(btn_date([day, month, year]), 'Feb 16'):
             self.asb_btn.destroy()
+            self.asb_btn.update()
         self.team_schedule = [x for x in bv.schedule if cities[self.team] + ' ' + self.team in x]
         # for loop causes too many issues, just listed out all buttons
         self.ranks = []
@@ -679,6 +680,7 @@ class Season:
                     continue
         self.lbl_var.set(month_abbreviations[month] + ' ' + str(year))
         if after(date, 'Apr 10'):
+            print(date)
             clear_root(self.root)
             Playoffs(self.root, self.team, self.east_ranks, self.west_ranks)
 
@@ -787,7 +789,7 @@ def after(d1, d2):
     elif m2 > m1:
         return False
     else:
-        return d1 > d2
+        return int(d1) > int(d2)
 
 
 def ordinal(n):
