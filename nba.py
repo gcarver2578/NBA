@@ -679,7 +679,7 @@ class Season:
                 except TclError:
                     continue
         self.lbl_var.set(month_abbreviations[month] + ' ' + str(year))
-        if after(date, 'Apr 10'):
+        if after(date, 'Apr 11'):
             print(date)
             clear_root(self.root)
             Playoffs(self.root, self.team, self.east_ranks, self.west_ranks)
@@ -771,8 +771,29 @@ class Playoffs:
     def __init__(self, root, team, _es_, _ws_):
         self.root = root
         self.team = team
-        self.east_seeds = _es_
-        self.west_seeds = _ws_
+        self.east_seeds = [_t_[1] for _t_ in _es_][:8]
+        self.west_seeds = [_t_[1] for _t_ in _ws_][:8]
+        self.matchups = []
+        for i in range(4):
+            txt = self.east_seeds[i] + ' vs. ' + self.east_seeds[7 - i]
+            lbl = Label(self.root, text=txt)
+            self.matchups.append([self.east_seeds[i], self.east_seeds[7 - i]])
+            lbl.pack()
+        self.btn = Button(self.root, text='Sim Round', command=lambda: self.sim_round())
+
+    def sim_round(self):
+        new_matchups = []
+        for team, opp in self.matchups:
+            h_wins = 0
+            a_wins = 0
+            while h_wins < 4 and a_wins < 4:
+                g = game(team, opp)
+                if g[0] > g[1]:
+                    h_wins += 1
+                else:
+                    a_wins += 1
+        
+
 
 
 def after(d1, d2):
