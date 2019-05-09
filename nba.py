@@ -680,7 +680,6 @@ class Season:
                     continue
         self.lbl_var.set(month_abbreviations[month] + ' ' + str(year))
         if after(date, 'Apr 11'):
-            print(date)
             clear_root(self.root)
             Playoffs(self.root, self.team, self.east_ranks, self.west_ranks)
 
@@ -773,27 +772,63 @@ class Playoffs:
         self.team = team
         self.east_seeds = [_t_[1] for _t_ in _es_][:8]
         self.west_seeds = [_t_[1] for _t_ in _ws_][:8]
-        self.matchups = []
-        for i in range(4):
-            txt = self.east_seeds[i] + ' vs. ' + self.east_seeds[7 - i]
-            lbl = Label(self.root, text=txt)
-            self.matchups.append([self.east_seeds[i], self.east_seeds[7 - i]])
-            lbl.pack()
+        self.east_team = ''
+        self.west_team = ''
+        self.east_matches = []
+        self.west_matches = []
+        for conf, seeds in [['East', self.east_seeds], ['West', self.west_seeds]]:
+            for i in range(4):
+                txt = seeds[i] + ' vs. ' + seeds[7 - i]
+                lbl = Label(self.root, text=txt)
+                if conf == 'East':
+                    self.east_matches.append([seeds[i], seeds[7 - i]])
+                else:
+                    self.west_matches.append([seeds[i], seeds[7 - i]])
+                lbl.pack()
         self.btn = Button(self.root, text='Sim Round', command=lambda: self.sim_round())
+        self.btn.pack()
 
     def sim_round(self):
-        new_matchups = []
-        for team, opp in self.matchups:
-            h_wins = 0
-            a_wins = 0
-            while h_wins < 4 and a_wins < 4:
-                g = game(team, opp)
-                if g[0] > g[1]:
-                    h_wins += 1
+        for conf, matches in [['East', self.east_matches], ['West', self.west_matches]]:
+            new_matchups = []
+            for team, opp in matches:
+                h_wins = 0
+                a_wins = 0
+                while h_wins < 4 and a_wins < 4:
+                    g = game(team, opp)
+                    if g[0] > g[1]:
+                        h_wins += 1
+                    else:
+                        a_wins += 1
+                if h_wins == 4:
+                    new_matchups.append(team)
                 else:
-                    a_wins += 1
-        
+                    new_matchups.append(opp)
+            if conf == 'East':
+                if len(new_matchups) == 4:
+                    self.east_matches = [[new_matchups[0], new_matchups[3]], [new_matchups[1], new_matchups[2]]]
+                elif len(new_matchups) == 2:
+                    self.east_matches = [[new_matchups[0], new_matchups[1]]]
+                elif len(new_matchups) == 1:
+                    self.east_team = new_matchups[0]
+            else:
+                if len(new_matchups) == 4:
+                    self.west_matches = [[new_matchups[0], new_matchups[3]], [new_matchups[1], new_matchups[2]]]
+                elif len(new_matchups) == 2:
+                    self.west_matches = [[new_matchups[0], new_matchups[1]]]
+                elif len(new_matchups) == 1:
+                    self.west_team = new_matchups[0]
+        self.update_lbls()
 
+    def update_lbls(self):
+        if self.east_team == '':
+            for conf_matches in [self.east_matches, self.west_matches]:
+                for match in conf_matches:
+                    lbl = Label(self.root, text=match[0] + ' vs. ' + match[1])
+                    lbl.pack()
+        else:
+            lbl = Label(self.root, text='Finals: ' + self.east_team + ' vs. ' + self.west_team)
+            lbl.pack()
 
 
 def after(d1, d2):
