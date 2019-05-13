@@ -12,9 +12,9 @@ northwest = ['Jazz', 'Nuggets', 'Thunder', 'Timberwolves', "Trail Blazers"]
 pacific = ['Clippers', 'Kings', 'Lakers', 'Suns', 'Warriors']
 southwest = ['Grizzlies', 'Mavericks', 'Pelicans', 'Rockets', 'Spurs']
 
-east = atlantic+central+southeast
-west = northwest+pacific+southwest
-nba = east+west
+east = atlantic + central + southeast
+west = northwest + pacific + southwest
+nba = east + west
 
 t = {1: '76ers', 2: 'Bucks', 3: 'Bulls', 4: 'Cavaliers', 5: 'Celtics',
      6: 'Clippers', 7: 'Grizzlies', 8: 'Hawks', 9: 'Heat', 10: 'Hornets',
@@ -190,6 +190,7 @@ for key in month_abbreviations1:
 
 class Start:
     """class for the beginning of the program, user chooses their favorite team"""
+
     def __init__(self, root):
         global force_trades
         force_trades = False
@@ -235,7 +236,7 @@ class Start:
         for names, frame in t_names:
             for name in names:
                 try:
-                    self.img_list.append(PhotoImage(file='images/'+name.lower()+'_logo.png'))
+                    self.img_list.append(PhotoImage(file='images/' + name.lower() + '_logo.png'))
                 except TclError:
                     self.img_list.append(PhotoImage(file='images/red x.png'))
                 self.b = Button(frame, image=self.img_list[-1],
@@ -281,6 +282,7 @@ class Start:
 
 class Trades:
     """used for making trades during the season"""
+
     def __init__(self, root, team):
         self.root = root
         self.root.configure(bg='white')
@@ -430,6 +432,8 @@ class Trades:
 
 
 class Season:
+    """regular season"""
+
     def __init__(self, root, team):
         global day, month, year, prev_res
         self.team = team
@@ -454,12 +458,12 @@ class Season:
         self.standings_btn = Button(self.b1_t_frame, text='Standings', bg=rgb((0, 200, 0)), fg='white',
                                     font=('Courier', 25), command=lambda: self.check_standings())
         self.asb_btn = Button(self.b1_b_frame, text='Sim to All Star Break', bg=rgb((255, 200, 0)), fg='white',
-                              font=('Courier', 25), command=lambda: self.sim_to('Feb 17', speed=.075, disable=True))
+                              font=('Courier', 25), command=lambda: self.sim_to('Feb 17', speed=.025, disable=True))
         # self.asb_btn = Button(self.b1_b_frame, text='Sim to All Star Break', bg=rgb((255, 200, 0)), fg='white',
         #                       font=('Courier', 25), command=lambda: self.sim_to('Feb 17', speed=.075, disable=True))
         self.playoffs_btn = Button(self.b1_t_frame, text='Sim to Playoffs', bg=rgb((0, 200, 0)), fg='white',
                                    font=('Courier', 25), command=lambda: self.sim_to('Apr 11',
-                                                                                     speed=.075, disable=True))
+                                                                                     speed=.025, disable=True))
         self.exit_btn = Button(self.b1_b_frame, text='Exit', bg=rgb((255, 0, 0)), fg='white',
                                font=('Courier', 25), command=lambda: self.check_end_prgm())
         for btn in [self.trade_btn, self.standings_btn, self.asb_btn, self.playoffs_btn, self.exit_btn]:
@@ -766,69 +770,470 @@ class Season:
 
 
 class Playoffs:
-    """Runs the playoffs"""
+    """Runs the playoffs up to the finals"""
+
     def __init__(self, root, team, _es_, _ws_):
         self.root = root
         self.team = team
         self.east_seeds = [_t_[1] for _t_ in _es_][:8]
         self.west_seeds = [_t_[1] for _t_ in _ws_][:8]
-        self.east_team = ''
-        self.west_team = ''
-        self.east_matches = []
-        self.west_matches = []
-        for conf, seeds in [['East', self.east_seeds], ['West', self.west_seeds]]:
-            for i in range(4):
-                txt = seeds[i] + ' vs. ' + seeds[7 - i]
-                lbl = Label(self.root, text=txt)
-                if conf == 'East':
-                    self.east_matches.append([seeds[i], seeds[7 - i]])
-                else:
-                    self.west_matches.append([seeds[i], seeds[7 - i]])
-                lbl.pack()
-        self.btn = Button(self.root, text='Sim Round', command=lambda: self.sim_round())
-        self.btn.pack()
+        self.east_remaining = self.east_seeds[:]
+        self.west_remaining = self.west_seeds[:]
+        # same issue with season, cant make a working for loop, so I have to settle for lots of unnecessary code :(
+        self.round_1_1 = Label(self.root, text='(1) ' + self.west_seeds[0], fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_1_1.grid(row=0, column=0)
+        self.round_1_8 = Label(self.root, text='(8) ' + self.west_seeds[7], fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_1_8.grid(row=1, column=0)
+        self.round_1_4 = Label(self.root, text='(4) ' + self.west_seeds[3], fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_1_4.grid(row=4, column=0)
+        self.round_1_5 = Label(self.root, text='(5) ' + self.west_seeds[4], fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_1_5.grid(row=5, column=0)
+        self.round_1_3 = Label(self.root, text='(3) ' + self.west_seeds[2], fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_1_3.grid(row=8, column=0)
+        self.round_1_6 = Label(self.root, text='(6) ' + self.west_seeds[5], fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_1_6.grid(row=9, column=0)
+        self.round_1_2 = Label(self.root, text='(2) ' + self.west_seeds[1], fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_1_2.grid(row=12, column=0)
+        self.round_1_7 = Label(self.root, text='(7) ' + self.west_seeds[6], fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_1_7.grid(row=13, column=0)
+        self.round_1_1_ws, self.round_1_2_ws, self.round_1_3_ws, self.round_1_4_ws = [[Label(self.root, fg='black',
+                                                                                             bg='white', font=15,
+                                                                                             anchor=W, width=1,
+                                                                                             borderwidth=2,
+                                                                                             relief='ridge'), i][0]
+                                                                                      for i in range(4)]
+        self.round_1_5_ws, self.round_1_6_ws, self.round_1_7_ws, self.round_1_8_ws = [[Label(self.root, fg='black',
+                                                                                             bg='white', font=15,
+                                                                                             anchor=W, width=1,
+                                                                                             borderwidth=2,
+                                                                                             relief='ridge'), i][0]
+                                                                                      for i in range(4)]
+        self.r_1_1_str, self.r_1_2_str, self.r_1_3_str, self.r_1_4_str = [[StringVar(), i][0] for i in range(4)]
+        self.r_1_5_str, self.r_1_6_str, self.r_1_7_str, self.r_1_8_str = [[StringVar(), i][0] for i in range(4)]
+        for s, lbl, _rw_ in [[self.r_1_1_str, self.round_1_1_ws, 0], [self.r_1_8_str, self.round_1_8_ws, 1],
+                             [self.r_1_4_str, self.round_1_4_ws, 4], [self.r_1_5_str, self.round_1_5_ws, 5],
+                             [self.r_1_3_str, self.round_1_3_ws, 8], [self.r_1_6_str, self.round_1_6_ws, 9],
+                             [self.r_1_2_str, self.round_1_2_ws, 12], [self.r_1_7_str, self.round_1_7_ws, 13]]:
+            s.set('0')
+            lbl.config(textvariable=s)
+            lbl.grid(row=_rw_, column=1)
+        self.round_2_1 = Label(self.root, fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_2_1.grid(row=2, column=2)
+        self.round_2_2 = Label(self.root, fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_2_2.grid(row=3, column=2)
+        self.round_2_3 = Label(self.root, fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_2_3.grid(row=10, column=2)
+        self.round_2_4 = Label(self.root, fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_2_4.grid(row=11, column=2)
+        self.round_2_1_ws, self.round_2_2_ws, self.round_2_3_ws, self.round_2_4_ws = [[Label(self.root, fg='black',
+                                                                                             bg='white', font=15,
+                                                                                             anchor=W, width=1,
+                                                                                             borderwidth=2,
+                                                                                             relief='ridge'), i][0]
+                                                                                      for i in range(4)]
+        self.r_2_1_str, self.r_2_2_str, self.r_2_3_str, self.r_2_4_str = [[StringVar(), i][0] for i in range(4)]
+        for s, lbl, _rw_ in [[self.r_2_1_str, self.round_2_1_ws, 2], [self.r_2_2_str, self.round_2_2_ws, 3],
+                             [self.r_2_3_str, self.round_2_3_ws, 10], [self.r_2_4_str, self.round_2_4_ws, 11]]:
+            s.set(' ')
+            lbl.config(textvariable=s)
+            lbl.grid(row=_rw_, column=3)
+        self.round_3_1 = Label(self.root, fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_3_1.grid(row=6, column=4)
+        self.round_3_2 = Label(self.root, fg='black', bg='white',
+                               font=15, anchor=W, width=15, borderwidth=2, relief='ridge')
+        self.round_3_2.grid(row=7, column=4)
+        self.round_3_1_ws, self.round_3_2_ws = [[Label(self.root, fg='black', bg='white', font=15, anchor=W, width=1,
+                                                       borderwidth=2, relief='ridge'), i][0] for i in range(2)]
+        self.r_3_1_str, self.r_3_2_str = [[StringVar(), i][0] for i in range(2)]
+        for s, lbl, _rw_ in [[self.r_3_1_str, self.round_3_1_ws, 6], [self.r_3_2_str, self.round_3_2_ws, 7]]:
+            s.set(' ')
+            lbl.config(textvariable=s)
+            lbl.grid(row=_rw_, column=5)
+        f_lbl = Label(self.root, bg='black', text='Finals', fg='white', font=25)
+        f_lbl.grid(row=14, column=6)
+        self.fin_west = Label(self.root, fg='black', bg='white',
+                              font=15, anchor=CENTER, width=15, borderwidth=2, relief='ridge')
+        self.fin_west.grid(row=15, column=6)
+        self.fin_east = Label(self.root, fg='black', bg='white',
+                              font=15, anchor=CENTER, width=15, borderwidth=2, relief='ridge')
+        self.fin_east.grid(row=16, column=6)
+        # so much code, have to repeat last 90 lines of code for eastern conference
+
+        self.round_1_1_e = Label(self.root, text='(1) ' + self.east_seeds[0], fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_1_1_e.grid(row=0, column=12)
+        self.round_1_8_e = Label(self.root, text='(8) ' + self.east_seeds[7], fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_1_8_e.grid(row=1, column=12)
+        self.round_1_4_e = Label(self.root, text='(4) ' + self.east_seeds[3], fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_1_4_e.grid(row=4, column=12)
+        self.round_1_5_e = Label(self.root, text='(5) ' + self.east_seeds[4], fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_1_5_e.grid(row=5, column=12)
+        self.round_1_3_e = Label(self.root, text='(3) ' + self.east_seeds[2], fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_1_3_e.grid(row=8, column=12)
+        self.round_1_6_e = Label(self.root, text='(6) ' + self.east_seeds[5], fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_1_6_e.grid(row=9, column=12)
+        self.round_1_2_e = Label(self.root, text='(2) ' + self.east_seeds[1], fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_1_2_e.grid(row=12, column=12)
+        self.round_1_7_e = Label(self.root, text='(7) ' + self.east_seeds[6], fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_1_7_e.grid(row=13, column=12)
+        self.round_1_1_ws_e, self.round_1_2_ws_e, self.round_1_3_ws_e, self.round_1_4_ws_e = [
+            [Label(self.root, fg='black',
+                   bg='white', font=15,
+                   anchor=E, width=1,
+                   borderwidth=2,
+                   relief='ridge'), i][0]
+            for i in range(4)]
+        self.round_1_5_ws_e, self.round_1_6_ws_e, self.round_1_7_ws_e, self.round_1_8_ws_e = [
+            [Label(self.root, fg='black',
+                   bg='white', font=15,
+                   anchor=E, width=1,
+                   borderwidth=2,
+                   relief='ridge'), i][0]
+            for i in range(4)]
+        self.r_1_1_str_e, self.r_1_2_str_e, self.r_1_3_str_e, self.r_1_4_str_e = [[StringVar(), i][0] for i in range(4)]
+        self.r_1_5_str_e, self.r_1_6_str_e, self.r_1_7_str_e, self.r_1_8_str_e = [[StringVar(), i][0] for i in range(4)]
+        for s, lbl, _rw_ in [[self.r_1_1_str_e, self.round_1_1_ws_e, 0], [self.r_1_8_str_e, self.round_1_8_ws_e, 1],
+                             [self.r_1_4_str_e, self.round_1_4_ws_e, 4], [self.r_1_5_str_e, self.round_1_5_ws_e, 5],
+                             [self.r_1_3_str_e, self.round_1_3_ws_e, 8], [self.r_1_6_str_e, self.round_1_6_ws_e, 9],
+                             [self.r_1_2_str_e, self.round_1_2_ws_e, 12], [self.r_1_7_str_e, self.round_1_7_ws_e, 13]]:
+            s.set('0')
+            lbl.config(textvariable=s)
+            lbl.grid(row=_rw_, column=11)
+        self.round_2_1_e = Label(self.root, fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_2_1_e.grid(row=2, column=10)
+        self.round_2_2_e = Label(self.root, fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_2_2_e.grid(row=3, column=10)
+        self.round_2_3_e = Label(self.root, fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_2_3_e.grid(row=10, column=10)
+        self.round_2_4_e = Label(self.root, fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_2_4_e.grid(row=11, column=10)
+        self.round_2_1_ws_e, self.round_2_2_ws_e, self.round_2_3_ws_e, self.round_2_4_ws_e = [[Label(self.root,
+                                                                                                     fg='black',
+                                                                                                     bg='white',
+                                                                                                     font=15,
+                                                                                                     anchor=E, width=1,
+                                                                                                     borderwidth=2,
+                                                                                                     relief='ridge'),
+                                                                                               i][0]
+                                                                                              for i in range(4)]
+        self.r_2_1_str_e, self.r_2_2_str_e, self.r_2_3_str_e, self.r_2_4_str_e = [[StringVar(), i][0] for i in range(4)]
+        for s, lbl, _rw_ in [[self.r_2_1_str_e, self.round_2_1_ws_e, 2], [self.r_2_2_str_e, self.round_2_2_ws_e, 3],
+                             [self.r_2_3_str_e, self.round_2_3_ws_e, 10], [self.r_2_4_str_e, self.round_2_4_ws_e, 11]]:
+            s.set(' ')
+            lbl.config(textvariable=s)
+            lbl.grid(row=_rw_, column=9)
+        self.round_3_1_e = Label(self.root, fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_3_1_e.grid(row=6, column=8)
+        self.round_3_2_e = Label(self.root, fg='black', bg='white',
+                                 font=15, anchor=E, width=15, borderwidth=2, relief='ridge')
+        self.round_3_2_e.grid(row=7, column=8)
+        self.round_3_1_ws_e, self.round_3_2_ws_e = [
+            [Label(self.root, fg='black', bg='white', font=15, anchor=E, width=1,
+                   borderwidth=2, relief='ridge'), i][0] for i in range(2)]
+        self.r_3_1_str_e, self.r_3_2_str_e = [[StringVar(), i][0] for i in range(2)]
+        for s, lbl, _rw_ in [[self.r_3_1_str_e, self.round_3_1_ws_e, 6], [self.r_3_2_str_e, self.round_3_2_ws_e, 7]]:
+            s.set(' ')
+            lbl.config(textvariable=s)
+            lbl.grid(row=_rw_, column=7)
+        self.sim_btn = Button(self.root, fg='white', bg='red', text='Sim\nRound', font=25,
+                              command=lambda: self.sim_round())
+        self.sim_btn.grid(row=17, column=6)
 
     def sim_round(self):
-        for conf, matches in [['East', self.east_matches], ['West', self.west_matches]]:
-            new_matchups = []
-            for team, opp in matches:
-                h_wins = 0
-                a_wins = 0
-                while h_wins < 4 and a_wins < 4:
-                    g = game(team, opp)
-                    if g[0] > g[1]:
-                        h_wins += 1
-                    else:
-                        a_wins += 1
-                if h_wins == 4:
-                    new_matchups.append(team)
-                else:
-                    new_matchups.append(opp)
-            if conf == 'East':
-                if len(new_matchups) == 4:
-                    self.east_matches = [[new_matchups[0], new_matchups[3]], [new_matchups[1], new_matchups[2]]]
-                elif len(new_matchups) == 2:
-                    self.east_matches = [[new_matchups[0], new_matchups[1]]]
-                elif len(new_matchups) == 1:
-                    self.east_team = new_matchups[0]
-            else:
-                if len(new_matchups) == 4:
-                    self.west_matches = [[new_matchups[0], new_matchups[3]], [new_matchups[1], new_matchups[2]]]
-                elif len(new_matchups) == 2:
-                    self.west_matches = [[new_matchups[0], new_matchups[1]]]
-                elif len(new_matchups) == 1:
-                    self.west_team = new_matchups[0]
-        self.update_lbls()
-
-    def update_lbls(self):
-        if self.east_team == '':
-            for conf_matches in [self.east_matches, self.west_matches]:
-                for match in conf_matches:
-                    lbl = Label(self.root, text=match[0] + ' vs. ' + match[1])
-                    lbl.pack()
+        self.sim_btn.config(state=DISABLED)
+        if len(self.east_remaining) == 8:
+            series = [[self.round_1_1, self.round_1_1_ws, self.r_1_1_str, self.round_1_8, self.round_1_8_ws,
+                       self.r_1_8_str, self.round_2_1, self.r_2_1_str],
+                      [self.round_1_4, self.round_1_4_ws, self.r_1_4_str, self.round_1_5, self.round_1_5_ws,
+                       self.r_1_5_str, self.round_2_2, self.r_2_2_str],
+                      [self.round_1_3, self.round_1_3_ws, self.r_1_3_str, self.round_1_6, self.round_1_6_ws,
+                       self.r_1_6_str, self.round_2_3, self.r_2_3_str],
+                      [self.round_1_2, self.round_1_2_ws, self.r_1_2_str, self.round_1_7, self.round_1_7_ws,
+                       self.r_1_7_str, self.round_2_4, self.r_2_4_str],
+                      [self.round_1_1_e, self.round_1_1_ws_e, self.r_1_1_str_e, self.round_1_8_e, self.round_1_8_ws_e,
+                       self.r_1_8_str_e, self.round_2_1_e, self.r_2_1_str_e],
+                      [self.round_1_4_e, self.round_1_4_ws_e, self.r_1_4_str_e, self.round_1_5_e, self.round_1_5_ws_e,
+                       self.r_1_5_str_e, self.round_2_2_e, self.r_2_2_str_e],
+                      [self.round_1_3_e, self.round_1_3_ws_e, self.r_1_3_str_e, self.round_1_6_e, self.round_1_6_ws_e,
+                       self.r_1_6_str_e, self.round_2_3_e, self.r_2_3_str_e],
+                      [self.round_1_2_e, self.round_1_2_ws_e, self.r_1_2_str_e, self.round_1_7_e, self.round_1_7_ws_e,
+                       self.r_1_7_str_e, self.round_2_4_e, self.r_2_4_str_e]]
+        elif len(self.east_remaining) == 4:
+            series = [[self.round_2_1, self.round_2_1_ws, self.r_2_1_str, self.round_2_2, self.round_2_2_ws,
+                       self.r_2_2_str, self.round_3_1, self.r_3_1_str],
+                      [self.round_2_3, self.round_2_3_ws, self.r_2_3_str, self.round_2_4, self.round_2_4_ws,
+                       self.r_2_4_str, self.round_3_2, self.r_3_2_str],
+                      [self.round_2_1_e, self.round_2_1_ws_e, self.r_2_1_str_e, self.round_2_2_e, self.round_2_2_ws_e,
+                       self.r_2_2_str_e, self.round_3_1_e, self.r_3_1_str_e],
+                      [self.round_2_3_e, self.round_2_3_ws_e, self.r_2_3_str_e, self.round_2_4_e, self.round_2_4_ws_e,
+                       self.r_2_4_str_e, self.round_3_2_e, self.r_3_2_str_e]]
+        elif len(self.east_remaining) == 2:
+            series = [[self.round_3_1, self.round_3_1_ws, self.r_3_1_str, self.round_3_2, self.round_3_2_ws,
+                       self.r_3_2_str, self.fin_west, ''],
+                      [self.round_3_1_e, self.round_3_1_ws_e, self.r_3_1_str_e, self.round_3_2_e, self.round_3_2_ws_e,
+                       self.r_3_2_str_e, self.fin_east, '']]
         else:
-            lbl = Label(self.root, text='Finals: ' + self.east_team + ' vs. ' + self.west_team)
-            lbl.pack()
+            t1 = self.fin_west['text']
+            t2 = self.fin_east['text']
+            clear_root(self.root)
+            SeasonAwards(self.root, t1, t2, self.team)
+            return
+        for lbl_1, lbl_1_ws, lbl_1_str, lbl_2, lbl_2_ws, lbl_2_str, new_lbl, new_lbl_str, in series:
+            if '(' in lbl_1['text']:
+                team = lbl_1['text'][4:]
+                opp = lbl_2['text'][4:]
+            else:
+                team = lbl_1['text']
+                opp = lbl_2['text']
+            h_wins = 0
+            a_wins = 0
+            while h_wins < 4 and a_wins < 4:
+                _time_.sleep(.1)
+                g = game(team, opp)
+                if g[0] > g[1]:
+                    h_wins += 1
+                    lbl_1_str.set(str(int(lbl_1_str.get()) + 1))
+                else:
+                    a_wins += 1
+                    lbl_2_str.set(str(int(lbl_2_str.get()) + 1))
+                self.root.update_idletasks()
+            if h_wins == 4:
+                lbl_1.config(fg='green')
+                lbl_2.config(fg='grey')
+                lbl_1_ws.config(fg='green')
+                lbl_2_ws.config(fg='grey')
+                new_lbl.config(text=team)
+                try:
+                    new_lbl_str.set('0')
+                except AttributeError:
+                    continue
+                finally:
+                    if conf_id[opp] == 'Eastern':
+                        self.east_remaining.remove(opp)
+                    else:
+                        self.west_remaining.remove(opp)
+                    self.sim_btn.config(state=NORMAL)
+            elif a_wins == 4:
+                lbl_1.config(fg='grey')
+                lbl_2.config(fg='green')
+                lbl_1_ws.config(fg='grey')
+                lbl_2_ws.config(fg='green')
+                new_lbl.config(text=opp)
+                try:
+                    new_lbl_str.set('0')
+                except AttributeError:
+                    continue
+                finally:
+                    if conf_id[team] == 'Eastern':
+                        self.east_remaining.remove(team)
+                    else:
+                        self.west_remaining.remove(team)
+                        self.sim_btn.config(state=NORMAL)
+        self.sim_btn.config(state=NORMAL)
+
+
+class SeasonAwards:
+    """displays award MVP and scoring champ leading into the NBA Finals"""
+
+    def __init__(self, root, t1, t2, team):
+        self.root = root
+        self.t1 = t1
+        self.t2 = t2
+        self.team = team
+        mvp_finalists = []
+        for team in top_3:
+            for p in top_3[team]:
+                player = p[0]
+                mvp_finalists.append([value(player), player])
+        mvp_finalists = [p[1] for p in sorted(mvp_finalists)][-3:]
+        mvp = mvp_finalists[0]
+        s_t = scoring_title()
+        self.frame1 = Frame(self.root, bg='black')
+        self.frame1.grid(row=0, column=0)
+        self.frame2 = Frame(self.root, bg='black')
+        self.frame2.grid(row=0, column=2, sticky='n')
+        self.btn = Button(self.root, text='Continue\nto Finals', font=30, fg='white',
+                          bg=rgb((0, 255, 0)), borderwidth=5, command=lambda: self.goto_finals())
+        self.btn.grid(row=0, column=1)
+        self.mvp_img = PhotoImage(file='images/' + mvp[0] + '_' + mvp.split(' ')[1] + '.png')
+        self.st_img = PhotoImage(file='images/' + s_t[0][0] + '_' + s_t[0].split(' ')[1] + '.png')
+        self.mvp_lbl = Label(self.frame1, bg='black', image=self.mvp_img)
+        self.st_lbl = Label(self.frame2, bg='black', image=self.st_img)
+        self.mvp_lbl.pack(side=TOP)
+        self.st_lbl.pack(side=TOP)
+        mvp_desc = Label(self.frame1, bg='black', fg='white', font=30, text=mvp + ' is the 18/19 Most Valuable Player!'
+                         + '\n' + stats_str(mvp)[:-25] + '\n\nMVP Finalists:\n' + mvp_finalists[0] + '\n' +
+                         mvp_finalists[1] + '\n' + mvp_finalists[2])
+        st_desc = Label(self.frame2, bg='black', fg='white', font=30, text=s_t[0] + ' is the 18/19 scoring champion,' +
+                        '\nscoring ' + str(s_t[1]) + ' points per game!')
+        mvp_desc.pack(side=TOP)
+        st_desc.pack(side=TOP)
+
+    def goto_finals(self):
+        clear_root(self.root)
+        Finals(self.root, self.t1, self.t2, self.team)
+
+
+class Finals:
+    """runs the NBA Finals"""
+
+    def __init__(self, root, t1, t2, team):
+        self.root = root
+        self.t1 = t1
+        self.t2 = t2
+        self.team = team
+        self.t1_img = PhotoImage(file='images/' + self.t1.lower() + '_logo.png')
+        self.t2_img = PhotoImage(file='images/' + self.t2.lower() + '_logo.png')
+        self.t1_str = StringVar()
+        self.t1_str.set('0')
+        self.t2_str = StringVar()
+        self.t2_str.set('0')
+        self.t1_lbl = Label(self.root, bg='black', image=self.t1_img, textvariable=self.t1_str, compound=TOP,
+                            font=('Courier', 30), fg='white')
+        self.t2_lbl = Label(self.root, bg='black', image=self.t2_img, textvariable=self.t2_str, compound=TOP,
+                            font=('Courier', 30), fg='white')
+        self.t1_lbl.grid(row=0, column=0, rowspan=2)
+        self.t2_lbl.grid(row=0, column=2, rowspan=2)
+        self.sim_btn = Button(self.root, text='Sim Game', bg='blue', fg='white', borderwidth=5,
+                              command=lambda: self.sim_game())
+        self.sim_btn.grid(row=1, column=1)
+        self.player_str = StringVar()
+        self.player_str.set('Player Stats:')
+        self.player_perf = Label(self.root, bg='black', textvariable=self.player_str, fg='white', font=('Courier', 27))
+        self.player_perf.grid(row=2, column=0, columnspan=3)
+        reset()
+        self.update_player_stats()
+
+    def sim_game(self):
+        if self.t1_str.get() != '4' and self.t2_str.get() != '4':
+            g = game(self.t1, self.t2)
+            if g[0] > g[1]:
+                self.t1_str.set(str(int(self.t1_str.get()) + 1))
+            else:
+                self.t2_str.set(str(int(self.t2_str.get()) + 1))
+        else:
+            if self.t1_str.get() == '4':
+                clear_root(self.root)
+                EndGame(self.root, self.t1, self.t2, self.team)
+            else:
+                clear_root(self.root)
+                EndGame(self.root, self.t2, self.t1, self.team)
+            return
+        self.update_player_stats()
+        if self.t1_str.get() == '4' or self.t2_str.get() == '4':
+            self.sim_btn['text'] = 'Continue'
+
+    def update_player_stats(self):
+        self.player_str.set('Player Stats:')
+        for _tm in [self.t1, self.t2]:
+            for player in top_3[_tm]:
+                p_name = str(player[0])
+                self.player_str.set(self.player_str.get() + '\n' + p_name + ': ' + stats_str(p_name)[:-24])
+            self.player_str.set(self.player_str.get() + '\n')
+
+
+class EndGame:
+    """end of program"""
+    def __init__(self, root, t1, t2, team):
+        self.root = root
+        self.t1 = t1
+        self.t2 = t2
+        self.team = team
+        self.lbl = Label(self.root, bg='black', fg='white',
+                         text='The ' + cities[self.t1] + ' ' + self.t1 + ' are NBA champions!\nPlay again?',
+                         font=('Courier', 25))
+        self.lbl.grid(row=0, column=0, columnspan=2)
+        self.yes_btn = Button(self.root, bg=rgb((0, 220, 0)), fg='white', text='Yes',
+                              command=lambda: self.new_game())
+        self.no_btn = Button(self.root, bg=rgb((220, 0, 0)), fg='white', text='No',
+                             command=lambda: self.end_prgm())
+        self.yes_btn.grid(row=1, column=0)
+        self.no_btn.grid(row=1, column=2)
+
+    def new_game(self):
+        global force_trades, month, day, year, prev_res
+        clear_root(self.root)
+        self.root.destroy()
+        reset()
+        force_trades = False
+        month = 10
+        day = 14
+        year = 2018
+        prev_res = []
+        main()
+        return
+
+    def end_prgm(self):
+        clear_root(self.root)
+        self.root.destroy()
+        return
+
+
+def reset():
+    for player in stats:
+        stats[player] = [[0, 0], [0, 0], 0, 0]
+    for team in t_stats:
+        t_stats[team] = [[0, 0], [0, 0], 0]
+
+
+def value(player):
+    """defines the value of a player through statistical analysis"""
+    _st_ = stats[player]
+    tm = team_id[player]
+    _stt_ = t_stats[tm]
+    ppg = round((_st_[0][0] * 2 + _st_[1][0] * 3) / _st_[3], 2)
+    apg = round((_st_[2]) / _st_[3], 2)
+    prf = round(ppg + (apg * 2.267), 2)
+    usg = usage_r[tm][team_index(player)] * 30
+    t_ppg = round(_stt_[1][0] / _stt_[2], 2)
+    percentage_of_points = round(ppg / t_ppg, 2) * 10
+    team_success = round((_stt_[0][0] / _stt_[2]) * 100, 2) / 5
+    if (_st_[0][1] + _st_[1][1]) == 0:
+        fgp = 0
+    else:
+        fgp = round(((_st_[0][0] + _st_[1][0]) / (_st_[0][1] + _st_[1][1])) * 10, 2)
+    if _st_[1][1] == 0:
+        tpp = 0
+    else:
+        tpp = round((_st_[1][0] / _st_[1][1]) * 10, 2)
+    return round(prf + team_success - usg + fgp + tpp + percentage_of_points, 2)
+
+
+def scoring_title():
+    """returns the highest scorer in the NBA and their PPG"""
+    s_t = ['', 0]
+    for player in stats:
+        _st_ = stats[player]
+        ppg = round((_st_[0][0] * 2 + _st_[1][0] * 3) / _st_[3], 1)
+        if ppg > s_t[1]:
+            s_t[0] = player
+            s_t[1] = ppg
+    return s_t
 
 
 def after(d1, d2):
@@ -916,7 +1321,7 @@ def stats_str(player):
         fgp = 0
         tpp = 0
         gp = 0
-    c = str(ppg) + ' PPG, ' + str(apg) + ' APG, ' + str(fgp) + ' FG%, ' + str(tpp) + ' 3P%, '\
+    c = str(ppg) + ' PPG, ' + str(apg) + ' APG, ' + str(fgp) + ' FG%, ' + str(tpp) + ' 3P%, ' \
         + str(gp) + ' Games Played, '
     try:
         c = c + str(top_3[team_id[player]][team_index(player)][3]) + ' OVR'
@@ -1004,11 +1409,11 @@ def dec(probability):
 
 # determines shooter based on usage rates
 def sh(rates):
-    zero = range(0, int(100*rates[0]))
-    one = range(int(rates[0]*100), int(100*rates[0]+100*rates[1]))
-    two = range(int(100*rates[0]+100*rates[1]), int(100*rates[0]+100*rates[1]+100*rates[2]))
+    zero = range(0, int(100 * rates[0]))
+    one = range(int(rates[0] * 100), int(100 * rates[0] + 100 * rates[1]))
+    two = range(int(100 * rates[0] + 100 * rates[1]), int(100 * rates[0] + 100 * rates[1] + 100 * rates[2]))
     # three = range(int(100*rates[0]+100*rates[1]+100*rates[2]), 101)
-    rd = int(100*random.random())
+    rd = int(100 * random.random())
     if rd in zero:
         return 0
     elif rd in one:
@@ -1096,6 +1501,3 @@ def overtime(t1, t2, score):
 
 
 main()
-
-# for tm in t_stats:
-#   print(tm, t_stats[tm])
