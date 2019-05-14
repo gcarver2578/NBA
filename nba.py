@@ -471,6 +471,10 @@ class Season:
         if after(btn_date([day, month, year]), 'Feb 16'):
             self.asb_btn.destroy()
             self.asb_btn.update()
+        if after(btn_date([day, month, year]), 'Apr 10'):
+            for btn in [self.trade_btn, self.playoffs_btn]:
+                btn.destroy()
+                btn.update()
         self.team_schedule = [x for x in bv.schedule if cities[self.team] + ' ' + self.team in x]
         # for loop causes too many issues, just listed out all buttons
         self.ranks = []
@@ -965,7 +969,8 @@ class Playoffs:
         self.sim_btn.grid(row=17, column=6)
 
     def sim_round(self):
-        self.sim_btn.config(state=DISABLED)
+        self.sim_btn.grid_forget()
+        self.sim_btn.update()
         if len(self.east_remaining) == 8:
             series = [[self.round_1_1, self.round_1_1_ws, self.r_1_1_str, self.round_1_8, self.round_1_8_ws,
                        self.r_1_8_str, self.round_2_1, self.r_2_1_str],
@@ -1037,7 +1042,6 @@ class Playoffs:
                         self.east_remaining.remove(opp)
                     else:
                         self.west_remaining.remove(opp)
-                    self.sim_btn.config(state=NORMAL)
             elif a_wins == 4:
                 lbl_1.config(fg='grey')
                 lbl_2.config(fg='green')
@@ -1054,7 +1058,8 @@ class Playoffs:
                     else:
                         self.west_remaining.remove(team)
                         self.sim_btn.config(state=NORMAL)
-        self.sim_btn.config(state=NORMAL)
+        self.sim_btn.grid(row=17, column=6)
+        self.sim_btn.update()
 
 
 class SeasonAwards:
@@ -1107,6 +1112,7 @@ class Finals:
         self.t1 = t1
         self.t2 = t2
         self.team = team
+        self.g = 0
         self.t1_img = PhotoImage(file='images/' + self.t1.lower() + '_logo.png')
         self.t2_img = PhotoImage(file='images/' + self.t2.lower() + '_logo.png')
         self.t1_str = StringVar()
@@ -1123,19 +1129,23 @@ class Finals:
                               command=lambda: self.sim_game())
         self.sim_btn.grid(row=1, column=1)
         self.player_str = StringVar()
-        self.player_str.set('Player Stats:')
+        self.player_str.set('Game Results:')
         self.player_perf = Label(self.root, bg='black', textvariable=self.player_str, fg='white', font=('Courier', 27))
         self.player_perf.grid(row=2, column=0, columnspan=3)
         reset()
-        self.update_player_stats()
 
     def sim_game(self):
         if self.t1_str.get() != '4' and self.t2_str.get() != '4':
             g = game(self.t1, self.t2)
+            self.g += 1
             if g[0] > g[1]:
                 self.t1_str.set(str(int(self.t1_str.get()) + 1))
+                self.player_str.set(self.player_str.get() + '\nGame ' + str(self.g) + ': ' + str(g[0]) + ' - ' +
+                                    str(g[1]) + ' ' + self.t1)
             else:
                 self.t2_str.set(str(int(self.t2_str.get()) + 1))
+                self.player_str.set(self.player_str.get() + '\nGame ' + str(self.g) + ': ' + str(g[1]) + ' - ' +
+                                    str(g[0]) + ' ' + self.t2)
         else:
             if self.t1_str.get() == '4':
                 clear_root(self.root)
@@ -1144,7 +1154,6 @@ class Finals:
                 clear_root(self.root)
                 EndGame(self.root, self.t2, self.t1, self.team)
             return
-        self.update_player_stats()
         if self.t1_str.get() == '4' or self.t2_str.get() == '4':
             self.sim_btn['text'] = 'Continue'
 
@@ -1167,13 +1176,13 @@ class EndGame:
         self.lbl = Label(self.root, bg='black', fg='white',
                          text='The ' + cities[self.t1] + ' ' + self.t1 + ' are NBA champions!\nPlay again?',
                          font=('Courier', 25))
-        self.lbl.grid(row=0, column=0, columnspan=2)
-        self.yes_btn = Button(self.root, bg=rgb((0, 220, 0)), fg='white', text='Yes',
+        self.lbl.pack(side=TOP)
+        self.yes_btn = Button(self.root, bg=rgb((0, 220, 0)), fg='white', text='Yes', font=('Courier', 30),
                               command=lambda: self.new_game())
-        self.no_btn = Button(self.root, bg=rgb((220, 0, 0)), fg='white', text='No',
+        self.no_btn = Button(self.root, bg=rgb((220, 0, 0)), fg='white', text='No', font=('Courier', 30),
                              command=lambda: self.end_prgm())
-        self.yes_btn.grid(row=1, column=0)
-        self.no_btn.grid(row=1, column=2)
+        self.yes_btn.pack(side=TOP)
+        self.no_btn.pack(side=TOP)
 
     def new_game(self):
         global force_trades, month, day, year, prev_res
